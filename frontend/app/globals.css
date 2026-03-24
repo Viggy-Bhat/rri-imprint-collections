@@ -1,0 +1,356 @@
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap");
+@import "tailwindcss";
+
+:root {
+  --background: #f8f6f2;
+  --foreground: #222;
+  --accent: #8b1f1f;
+  --accent-light: #fff5f5;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* Global Background Pattern */
+body {
+  background-color: #f8f6f2;
+  background-image: url("/assets/background/rri-pattern.png");
+  background-repeat: repeat;
+  background-size: 600px;
+  background-attachment: fixed;
+  color: #222;
+  font-family: "Libre Baskerville", serif;
+  line-height: 1.7;
+  font-size: 16px;
+}
+
+/* Academic Archive Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Playfair Display", serif;
+  color: #8b1f1f;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+h2 {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+p, li {
+  font-family: "Libre Baskerville", serif;
+  line-height: 1.7;
+  font-size: 16px;
+}
+
+/* Site Container with Overlay */
+.site-container {
+  background: rgba(255, 255, 255, 0.85);
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+
+/* Rich Text Content Styling */
+.rich-text-content {
+  font-family: "Libre Baskerville", serif;
+  font-size: 16px;
+  line-height: 1.8;
+}
+
+.rich-text-content p {
+  margin-bottom: 1rem;
+  margin-top: 0.5rem;
+}
+
+.rich-text-content strong {
+  font-weight: 700;
+  color: #222;
+}
+
+.rich-text-content em {
+  font-style: italic;
+}
+
+.rich-text-content u {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+.rich-text-content a {
+  color: #8b1f1f;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: opacity 0.2s ease;
+}
+
+.rich-text-content a:hover {
+  opacity: 0.8;
+}
+
+.rich-text-content ul {
+  padding-left: 20px;
+  list-style-type: disc;
+  margin: 1rem 0;
+}
+
+.rich-text-content ul li {
+  margin-bottom: 0.5rem;
+}
+
+.rich-text-content ol {
+  padding-left: 20px;
+  list-style-type: decimal;
+  margin: 1rem 0;
+}
+
+.rich-text-content ol li {
+  margin-bottom: 0.5rem;
+}
+
+.rich-text-content blockquote {
+  border-left: 4px solid #8b1f1f;
+  padding-left: 1rem;
+  margin: 1rem 0;
+  font-style: italic;
+  color: #555;
+}
+
+.rich-text-content h2 {
+  font-size: 1.75rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.rich-text-content h3 {
+  font-size: 1.25rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* CMS Academic Typography System */
+.cms-content {
+  font-family: "Libre Baskerville", serif;
+  font-size: 17px;
+  line-height: 1.8;
+  color: #222;
+  max-width: 800px;
+}
+
+.cms-content h2 {
+  font-family: "Playfair Display", serif;
+  font-size: 26px;
+  color: #8b1f1f;
+  margin-top: 40px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.cms-content h3 {
+  font-family: "Playfair Display", serif;
+  font-size: 20px;
+  color: #8b1f1f;
+  margin-top: 30px;
+}
+
+.cms-content p {
+  margin-bottom: 18px;
+}
+
+.cms-content a {
+  color: #8b1f1f;
+  text-decoration: underline;
+}
+
+.cms-content a:hover {
+  opacity: 0.8;
+}
+
+.cms-content ul,
+.cms-content ol {
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
+
+.cms-content li {
+  margin-bottom: 8px;
+}
+
+.cms-content strong {
+  font-weight: 700;
+}
+
+.cms-content em {
+  font-style: italic;
+}
+
+.cms-content u {
+  text-decoration: underline;
+}
+
+.cms-content blockquote {
+  border-left: 4px solid #8b1f1f;
+  padding-left: 15px;
+  font-style: italic;
+  color: #555;
+}
+
+.cms-content hr {
+  border: none;
+  border-top: 1px solid #ddd;
+  margin: 40px 0;
+}
+
+.cms-content.drop-cap p:first-child::first-letter {
+  font-size: 32px;
+  font-weight: bold;
+  color: #8b1f1f;
+}
+
+/* Section Titles and Dividers */
+.section-title {
+  font-size: 24px;
+  color: #8b1f1f;
+  text-align: center;
+  margin-top: 40px;
+  font-family: "Playfair Display", serif;
+  font-weight: 600;
+}
+
+.section-divider {
+  height: 2px;
+  background: #8b1f1f;
+  width: 80px;
+  margin: 10px auto 20px auto;
+}
+
+/* Skeleton Loading Animation */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #e5e7eb;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  animation: skeleton-shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Modern Academic UI Styling */
+
+/* Card Components - Academic Style */
+.card-academic {
+  @apply bg-[#efe9dc] border border-[#d9cfc1] rounded-xl shadow-sm;
+}
+
+.card-academic:hover {
+  @apply shadow-md;
+}
+
+/* Button Styling */
+.btn-primary {
+  @apply bg-[#8b1c1c] text-white px-6 py-2 rounded-lg hover:bg-[#6b1515] transition-colors font-medium;
+}
+
+.btn-secondary {
+  @apply bg-neutral-200 text-neutral-900 px-6 py-2 rounded-lg hover:bg-neutral-300 transition-colors font-medium;
+}
+
+.btn-outline {
+  @apply border border-[#8b1c1c] text-[#8b1c1c] px-6 py-2 rounded-lg hover:bg-[#f7f3ea] transition-colors font-medium;
+}
+
+/* Gallery Styling */
+.gallery-grid {
+  @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4;
+}
+
+.gallery-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+
+.gallery-item:hover .gallery-image {
+  transform: scale(1.05);
+}
+
+.gallery-image {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  transition: transform 300ms ease;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.gallery-caption {
+  @apply text-sm text-center text-neutral-600 mt-2 leading-snug;
+}
+
+/* Badge Styling */
+.badge-primary {
+  @apply inline-block bg-[#8b1c1c]/10 text-[#8b1c1c] px-3 py-1 rounded-full text-xs font-semibold;
+}
+
+.badge-secondary {
+  @apply inline-block bg-neutral-100 text-neutral-700 px-3 py-1 rounded-full text-xs font-semibold;
+}
+
+/* Separator */
+.divider-academic {
+  @apply h-px w-20 bg-[#8b1c1c] mx-auto my-6;
+}
+
+/* Section Header */
+.section-header-academic {
+  @apply text-center space-y-3;
+}
+
+.section-header-academic h1 {
+  @apply text-4xl font-bold text-[#8b1c1c] font-serif;
+}
+
+.section-header-academic h2 {
+  @apply text-2xl font-semibold text-[#8b1c1c] font-serif;
+}
+
+.section-header-academic .subtitle {
+  @apply text-red-700 font-medium;
+}
+
+/* Grid and Layout Utilities */
+.layout-sidebar {
+  @apply lg:w-56 shrink-0;
+}
+
+.layout-content {
+  @apply min-w-0 flex-1 space-y-7;
+}
+
+.layout-profile {
+  @apply lg:w-80 shrink-0;
+}
