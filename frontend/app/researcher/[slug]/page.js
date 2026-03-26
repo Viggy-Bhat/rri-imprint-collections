@@ -10,12 +10,32 @@ import {
   getResearcherPageBySlugResult,
   getResearcherProfileImageUrl,
   getSidebarItems,
-  getSidebarItemsFromSectionPages,
 } from "./researcherApi";
+
+function buildSidebarSections(sidebarItems) {
+  const items = Array.isArray(sidebarItems) ? sidebarItems : [];
+
+  return items
+    .map((item) => {
+      if (!item?.title || !item?.slug) {
+        return null;
+      }
+
+      return {
+        title: item.title,
+        slug: item.slug,
+        subtitle: item.subtitle,
+      };
+    })
+    .filter(Boolean);
+}
+
+
+
 
 export default async function ResearcherPage({ params: paramsPromise }) {
   const params = await paramsPromise;
-  const { researcher, sectionPages, hasError } = await getResearcherPageBySlugResult(params.slug);
+  const { researcher, hasError } = await getResearcherPageBySlugResult(params.slug);
 
   if (hasError) {
     return <ContentUnavailable />;
@@ -39,18 +59,15 @@ export default async function ResearcherPage({ params: paramsPromise }) {
 
   const dateText = formatIndianDateRange(researcher.birth_date, researcher.death_date) || null;
 
-  const sectionPageSidebarItems = getSidebarItemsFromSectionPages(sectionPages);
-  const sidebarItems =
-    sectionPageSidebarItems.length > 0
-      ? sectionPageSidebarItems
-      : getSidebarItems(researcher.sidebar_items);
+  const sidebarItems = getSidebarItems(researcher.sidebar_items);
+  const sidebarSections = buildSidebarSections(sidebarItems);
   const biographySections = getBiographySections(researcher.bio_sections);
   const profileItems = getProfileItems(researcher.profile_items);
 
   return (
     <ResearcherPageLayout
       slug={params.slug}
-      sidebarItems={sidebarItems}
+      sidebarItems={sidebarSections}
       researcher={researcher}
       profileImageUrl={profileImageUrl}
       profileItems={profileItems}

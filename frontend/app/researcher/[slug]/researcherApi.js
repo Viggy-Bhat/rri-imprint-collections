@@ -35,12 +35,14 @@ export async function getResearcherSectionPages(researcherId) {
   }
 
   try {
-    const response = await fetch(
-      `${WAGTAIL_PAGES_API}?child_of=${researcherId}&limit=200`,
-      { cache: "no-store" }
-    );
+    const response = await fetch(`${WAGTAIL_PAGES_API}?child_of=${researcherId}`, {
+      cache: "no-store",
+    });
 
     if (!response.ok) {
+      console.error(
+        `[getResearcherSectionPages] Failed (${response.status}) for child_of=${researcherId}`
+      );
       return [];
     }
 
@@ -199,7 +201,6 @@ export function getSidebarItems(sidebarItems) {
       
       const rawItems = Array.isArray(value?.items) ? value.items : [];
       const smartContent = Array.isArray(value?.smart_content) ? value.smart_content : [];
-      const gallery = Array.isArray(value?.gallery) ? value.gallery : [];
 
       const items = rawItems
         .map((item) => {
@@ -231,7 +232,6 @@ export function getSidebarItems(sidebarItems) {
         slug,
         items,
         smart_content: smartContent,
-        gallery: gallery,
       };
     })
     .filter(Boolean)

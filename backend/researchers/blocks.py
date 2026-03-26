@@ -14,6 +14,13 @@ RICH_TEXT_FEATURES = [
     "h4",
 ]
 
+
+class RenditionImageChooserBlock(ImageChooserBlock):
+    """Compatibility shim for historical migrations."""
+
+    pass
+
+
 class SectionItemBlock(blocks.StructBlock):
     title = blocks.CharBlock()
     description = blocks.RichTextBlock(
@@ -31,7 +38,6 @@ class SectionBlock(blocks.StructBlock):
     type = blocks.ChoiceBlock(
         choices=[
             ("text", "Text Section"),
-            ("gallery", "Gallery Section"),
             ("list", "List Section"),
         ],
         required=False,
@@ -42,7 +48,6 @@ class SectionBlock(blocks.StructBlock):
         required=False,
         help_text="Rich text with bold, italic, underline, links, and lists"
     )
-    images = blocks.ListBlock(ImageChooserBlock(), required=False)
     items = blocks.ListBlock(SectionItemBlock(), required=False)
 
     class Meta:
@@ -118,15 +123,6 @@ class StudentSupervisionBlock(blocks.StructBlock):
         label = "Student Supervision"
 
 
-class GalleryImageBlock(blocks.StructBlock):
-    image = ImageChooserBlock(required=True)
-    caption = blocks.CharBlock(required=False, help_text="Optional caption for the image")
-
-    class Meta:
-        icon = "image"
-        label = "Gallery Image"
-
-
 class SidebarItemBlock(blocks.StructBlock):
     title = blocks.CharBlock(required=True)
     subtitle = blocks.CharBlock(required=False)
@@ -140,11 +136,6 @@ class SidebarItemBlock(blocks.StructBlock):
             ("supervision", StudentSupervisionBlock()),
         ],
         required=False,
-    )
-    gallery = blocks.ListBlock(
-        GalleryImageBlock(),
-        required=False,
-        help_text="Add images to create a gallery for this section",
     )
 
     class Meta:

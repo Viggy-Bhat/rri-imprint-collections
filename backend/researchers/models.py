@@ -2,7 +2,7 @@
 # Create your models here.
 from django.db import models
 from wagtail import blocks
-from wagtail.models import Page
+from wagtail.models import Orderable, Page
 from wagtail.fields import StreamField
 from wagtail.admin.panels import FieldPanel
 from wagtail.api import APIField
@@ -119,6 +119,7 @@ class ResearcherPage(Page):
         APIField("bio_sections"),
         APIField("smart_content"),
     ]
+
 
 
 class ResearcherSectionPage(Page):
