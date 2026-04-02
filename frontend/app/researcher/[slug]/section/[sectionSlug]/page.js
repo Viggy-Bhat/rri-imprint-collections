@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { Breadcrumb } from "@/app/components/Breadcrumb";
 import { ContentUnavailable } from "@/app/components/ContentUnavailable";
+import { SidebarContentPage } from "@/app/components/SidebarContentPage";
 import { ResearcherPageLayout } from "@/app/components/researcher/ResearcherPageLayout";
 import SmartContentRenderer from "@/components/SmartContentRenderer";
 import {
@@ -17,6 +17,7 @@ import {
 export default async function ResearcherSectionPage({ params: paramsPromise }) {
   const params = await paramsPromise;
   const { slug, sectionSlug } = params;
+  const normalizedSectionSlug = toSectionSlug(sectionSlug);
   const { researcher, sectionPages, hasError } = await getResearcherPageBySlugResult(slug);
 
   if (hasError) {
@@ -43,9 +44,12 @@ export default async function ResearcherSectionPage({ params: paramsPromise }) {
   const profileItems = getProfileItems(researcher.profile_items);
 
   const currentStreamSection = streamSidebarItems.find(
-    (item) => toSectionSlug(item.slug) === sectionSlug
+    (item) => toSectionSlug(item.slug) === normalizedSectionSlug
   );
-  const sectionPage = await getResearcherSectionPageBySlug(researcher.id, sectionSlug);
+  const sectionPage = await getResearcherSectionPageBySlug(researcher.id, normalizedSectionSlug);
+  const sectionItems = Array.isArray(currentStreamSection?.items)
+    ? currentStreamSection.items
+    : [];
 
   const streamSmartContent = Array.isArray(currentStreamSection?.smart_content)
     ? currentStreamSection.smart_content
@@ -57,12 +61,14 @@ export default async function ResearcherSectionPage({ params: paramsPromise }) {
   const sectionBlocks = (streamSmartContent.length > 0 ? streamSmartContent : sectionPageSmartContent).filter(
     (block) => {
       const type = block?.type || block?.block_type;
-      return Boolean(type && type !== "gallery");
+      return Boolean(type);
     }
   );
 
-  if (sectionBlocks.length === 0) {
-    notFound();
+  const hasKnownSection = Boolean(currentStreamSection || sectionPage);
+
+  if (!hasKnownSection) {
+    return <ContentUnavailable />;
   }
 
   const sectionTitle =
@@ -85,10 +91,18 @@ export default async function ResearcherSectionPage({ params: paramsPromise }) {
         <p className="text-red-700 font-medium">{sectionTitle}</p>
       </header>
 
-      <section className="rounded-2xl border border-red-100 bg-white/95 px-5 py-5 sm:px-7 sm:py-6 shadow-md">
-        {sectionSubtitle ? <p className="text-gray-600 mb-4">{sectionSubtitle}</p> : null}
-        <SmartContentRenderer blocks={sectionBlocks} />
-      </section>
+      {sectionBlocks.length > 0 ? (
+        <section className="rounded-2xl border border-red-100 bg-white/95 px-5 py-5 sm:px-7 sm:py-6 shadow-md">
+          {sectionSubtitle ? <p className="text-gray-600 mb-4">{sectionSubtitle}</p> : null}
+          <SmartContentRenderer blocks={sectionBlocks} />
+        </section>
+      ) : (
+        <SidebarContentPage
+          title={sectionTitle}
+          subtitle={sectionSubtitle}
+          items={sectionItems}
+        />
+      )}
     </ResearcherPageLayout>
   );
 }

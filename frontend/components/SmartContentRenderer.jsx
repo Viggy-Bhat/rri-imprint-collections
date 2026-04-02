@@ -1,3 +1,5 @@
+import GalleryGridCarousel from "@/components/GalleryGridCarousel";
+
 export default function SmartContentRenderer({ blocks }) {
   if (!blocks || blocks.length === 0) {
     return null;
@@ -77,6 +79,19 @@ export default function SmartContentRenderer({ blocks }) {
                 {data.year && <p>{data.year}</p>}
               </div>
             );
+
+          case "gallery": {
+            const galleryImages = Array.isArray(data?.images) ? data.images : [];
+
+            return (
+              <div key={index} className="card-academic p-6">
+                {data?.title ? (
+                  <h3 className="text-xl font-semibold text-[#8b1c1c] mb-4">{data.title}</h3>
+                ) : null}
+                <GalleryGridCarousel images={galleryImages} />
+              </div>
+            );
+          }
 
           default:
             return null;

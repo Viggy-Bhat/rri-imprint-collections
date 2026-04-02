@@ -1,7 +1,8 @@
 import { fetchImageDetails } from "@/app/lib/wagtailApi";
-import { getWagtailPagesApiUrl } from "@/app/lib/config";
+import { getWagtailBackendBaseUrl, getWagtailPagesApiUrl } from "@/app/lib/config";
 
 const WAGTAIL_PAGES_API = getWagtailPagesApiUrl();
+const WAGTAIL_BACKEND_BASE = getWagtailBackendBaseUrl();
 
 function getPageType(page) {
   return page?.meta?.type || page?.type;
@@ -13,7 +14,8 @@ export function getSidebarItemsFromSectionPages(sectionPages) {
   return pages
     .map((page) => {
       const title = String(page?.title || "").trim();
-      const slug = String(page?.meta?.slug || page?.slug || "").trim();
+      const rawSlug = String(page?.meta?.slug || page?.slug || "").trim();
+      const slug = toSectionSlug(rawSlug);
       const subtitle = String(page?.subtitle || "").trim();
 
       if (!title || !slug) {
@@ -57,7 +59,7 @@ export async function getResearcherSectionPages(researcherId) {
 }
 
 export async function getResearcherSectionPageBySlug(researcherId, sectionSlug) {
-  const normalizedSlug = String(sectionSlug || "").trim();
+  const normalizedSlug = toSectionSlug(sectionSlug);
 
   if (!researcherId || !normalizedSlug) {
     return null;
@@ -65,7 +67,7 @@ export async function getResearcherSectionPageBySlug(researcherId, sectionSlug) 
 
   const sectionPages = await getResearcherSectionPages(researcherId);
   const matchedSection = sectionPages.find(
-    (page) => String(page?.meta?.slug || page?.slug || "").trim() === normalizedSlug
+    (page) => toSectionSlug(page?.meta?.slug || page?.slug || "") === normalizedSlug
   );
 
   if (!matchedSection?.id) {
@@ -293,7 +295,15 @@ export async function getResearcherProfileImageUrl(researcher) {
   }
 
   let profileImageUrl =
-    researcher.profile_image?.meta?.download_url || researcher.profile_image?.file || null;
+    researcher.profile_image?.url ||
+    researcher.profile_image?.meta?.download_url ||
+    researcher.profile_image?.file ||
+    researcher.profile_image?.file?.url ||
+    null;
+
+  if (typeof profileImageUrl === "string" && profileImageUrl.startsWith("/")) {
+    profileImageUrl = `${WAGTAIL_BACKEND_BASE}${profileImageUrl}`;
+  }
 
   if (!profileImageUrl && researcher.profile_image?.id) {
     const profileImage = await fetchImageDetails(researcher.profile_image.id);
