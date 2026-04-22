@@ -11,7 +11,7 @@ function SectionPlaceholderCard({ wide = false }) {
 
 export default function Loading() {
   return (
-    <main className="min-h-screen bg-gray-50 font-sans transition-opacity duration-300">
+    <main className="min-h-screen bg-transparent font-sans transition-opacity duration-300">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
         <div className="flex flex-col gap-6 lg:gap-10 lg:flex-row">
           <aside className="w-full lg:w-52 shrink-0">

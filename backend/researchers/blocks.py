@@ -96,6 +96,7 @@ class GuidanceBlock(blocks.StructBlock):
     student_name = blocks.CharBlock(required=True)
     thesis_title = blocks.CharBlock(required=True)
     year = blocks.IntegerBlock(required=False)
+    link = blocks.URLBlock(required=False)
 
     class Meta:
         icon = "user"
@@ -123,6 +124,77 @@ class StudentSupervisionBlock(blocks.StructBlock):
         label = "Student Supervision"
 
 
+class GalleryImageItemBlock(blocks.StructBlock):
+    image = ImageChooserBlock(required=True)
+    caption = blocks.CharBlock(required=False, help_text="Optional caption for the image")
+    about_image = blocks.RichTextBlock(
+        required=False,
+        features=["bold", "italic", "underline"],
+        help_text="Optional rich text shown in the gallery modal as About this Image",
+    )
+
+    def to_python(self, value):
+        # Backward compatibility: older entries were stored as image IDs/objects,
+        # so convert them into the new struct format transparently.
+        if isinstance(value, (int, str)):
+            value = {
+                "image": value,
+                "caption": "",
+                "about_image": "",
+            }
+        elif isinstance(value, dict) and "image" not in value:
+            value = {
+                "image": value,
+                "caption": "",
+                "about_image": "",
+            }
+
+        return super().to_python(value)
+
+    def bulk_to_python(self, values):
+        # Wagtail admin calls bulk_to_python for list items; normalize legacy
+        # image-only entries first so old content can still be edited safely.
+        normalized_values = []
+
+        for value in values:
+            if isinstance(value, (int, str)):
+                normalized_values.append(
+                    {
+                        "image": value,
+                        "caption": "",
+                        "about_image": "",
+                    }
+                )
+            elif isinstance(value, dict) and "image" not in value:
+                normalized_values.append(
+                    {
+                        "image": value,
+                        "caption": "",
+                        "about_image": "",
+                    }
+                )
+            else:
+                normalized_values.append(value)
+
+        return super().bulk_to_python(normalized_values)
+
+    class Meta:
+        icon = "image"
+        label = "Gallery Image"
+
+
+class GalleryBlock(blocks.StructBlock):
+    title = blocks.CharBlock(required=False)
+    images = blocks.ListBlock(
+        GalleryImageItemBlock(),
+        label="Gallery Images",
+    )
+
+    class Meta:
+        icon = "image"
+        label = "Gallery"
+
+
 class SidebarItemBlock(blocks.StructBlock):
     title = blocks.CharBlock(required=True)
     subtitle = blocks.CharBlock(required=False)
@@ -134,6 +206,7 @@ class SidebarItemBlock(blocks.StructBlock):
             ("guidance", GuidanceBlock()),
             ("news", NewsClippingBlock()),
             ("supervision", StudentSupervisionBlock()),
+            ("gallery", GalleryBlock()),
         ],
         required=False,
     )

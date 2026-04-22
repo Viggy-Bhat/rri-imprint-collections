@@ -1,21 +1,25 @@
 
 # Create your models here.
+from datetime import date
+
+from django import forms
 from django.db import models
 from wagtail import blocks
 from wagtail.models import Orderable, Page
 from wagtail.fields import StreamField
 from wagtail.admin.panels import FieldPanel
 from wagtail.api import APIField
+from wagtail.images.api.fields import ImageRenditionField
 from wagtail.search import index
 from wagtail.contrib.settings.models import BaseSiteSetting, register_setting
 from wagtail.images.models import Image
 
 from .blocks import (
     BiographySectionBlock,
+    GalleryBlock,
     GuidanceBlock,
     NewsClippingBlock,
     PublicationBlock,
-    SectionBlock,
     SidebarItemBlock,
     StudentSupervisionBlock,
 )
@@ -59,14 +63,6 @@ class ResearcherPage(Page):
         help_text="Add rows like Born, Field, Institution. You can add, reorder, or remove items.",
     )
 
-    content = StreamField(
-        [
-            ("section", SectionBlock()),
-        ],
-        use_json_field=True,
-        blank=True
-    )
-
     sidebar_items = StreamField(
         [
             ("sidebar_item", SidebarItemBlock()),
@@ -85,39 +81,37 @@ class ResearcherPage(Page):
         help_text="Add and reorder biography sections for center content.",
     )
 
-    smart_content = StreamField(
-        [
-            ("publication", PublicationBlock()),
-            ("guidance", GuidanceBlock()),
-            ("news", NewsClippingBlock()),
-            ("supervision", StudentSupervisionBlock()),
-        ],
-        use_json_field=True,
-        blank=True,
-    )
-
     content_panels = Page.content_panels + [
-        FieldPanel("birth_date"),
-        FieldPanel("death_date"),
+        FieldPanel(
+            "birth_date",
+            widget=forms.SelectDateWidget(
+                years=range(date.today().year, 1899, -1)
+            ),
+        ),
+        FieldPanel(
+            "death_date",
+            widget=forms.SelectDateWidget(
+                years=range(date.today().year, 1899, -1)
+            ),
+        ),
         FieldPanel("field"),
         FieldPanel("profile_image"),
         FieldPanel("profile_items"),
-        FieldPanel("content"),
         FieldPanel("sidebar_items"),
         FieldPanel("bio_sections"),
-        FieldPanel("smart_content"),
     ]
 
     api_fields = [
         APIField("field"),
         APIField("birth_date"),
         APIField("death_date"),
-        APIField("profile_image"),
+        APIField(
+            "profile_image",
+            serializer=ImageRenditionField("max-900x900"),
+        ),
         APIField("profile_items"),
-        APIField("content"),
         APIField("sidebar_items"),
         APIField("bio_sections"),
-        APIField("smart_content"),
     ]
 
 
@@ -134,6 +128,7 @@ class ResearcherSectionPage(Page):
             ("guidance", GuidanceBlock()),
             ("news", NewsClippingBlock()),
             ("supervision", StudentSupervisionBlock()),
+            ("gallery", GalleryBlock()),
         ],
         use_json_field=True,
         blank=True,

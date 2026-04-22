@@ -1,0 +1,63 @@
+.siteHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 0 12px;
+  background-color: #f8f6f2;
+}
+
+.heroSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.heroSectionCompact {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(8px, 1.8vw, 14px) 20px;
+}
+
+.heroTitle {
+  margin: 0;
+  font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+  color: #7a1c1c;
+  line-height: 1.04;
+}
+
+
+.heroButtonFrame {
+  width: clamp(260px, 34vw, 500px);
+  height: clamp(100px, 12vw, 170px);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.heroButton {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transform: none;
+  border-radius: 8px;
+}
+
+/* Compact (non-home) header: keep emblem small and contained */
+.heroSectionCompact .heroButton {
+  width: clamp(140px, 22vw, 260px);
+  height: auto;
+  object-fit: contain;
+  transform: none;
+  border-radius: 10px;
+}

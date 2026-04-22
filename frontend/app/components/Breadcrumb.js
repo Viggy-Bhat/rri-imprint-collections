@@ -12,48 +12,70 @@ function formatSegmentLabel(segment) {
 }
 
 function buildSegmentHref(segments, index) {
-  return `/${segments.slice(0, index + 1).join("/")}`;
+  return `/${segments.slice(0, index + 1).map(encodeURIComponent).join("/")}`;
+}
+
+function buildBreadcrumbItems(pathname, researcherTitle, slug) {
+  const segments = pathname.split("/").filter(Boolean);
+
+  if (segments.length === 0) {
+    return [];
+  }
+
+  if (segments[0] === "researcher" && segments[1]) {
+    const items = [
+      {
+        label: "Home",
+        href: "/",
+        isActive: false,
+      },
+    ];
+
+    const researcherLabel = researcherTitle || formatSegmentLabel(segments[1]);
+    const researcherHref = slug
+      ? `/researcher/${encodeURIComponent(slug)}`
+      : `/researcher/${encodeURIComponent(segments[1])}`;
+
+    items.push({
+      label: researcherLabel,
+      href: researcherHref,
+      isActive: segments.length === 2,
+    });
+
+    if (segments.length > 2) {
+      const lastSegment = segments[segments.length - 1];
+
+      items.push({
+        label:
+          segments[2] === "section" && segments[3]
+            ? formatSegmentLabel(segments[3])
+            : formatSegmentLabel(lastSegment),
+        href: pathname,
+        isActive: true,
+      });
+    }
+
+    return items;
+  }
+
+  return segments.map((segment, index) => {
+    const isLast = index === segments.length - 1;
+
+    return {
+      label: formatSegmentLabel(segment),
+      href: isLast ? null : buildSegmentHref(segments, index),
+      isActive: isLast,
+    };
+  });
 }
 
 export function Breadcrumb({ researcherTitle, slug }) {
   const pathname = usePathname() || "";
-  const segments = pathname.split("/").filter(Boolean);
+  const breadcrumbItems = buildBreadcrumbItems(pathname, researcherTitle, slug);
 
-  if (segments.length === 0) {
+  if (breadcrumbItems.length === 0) {
     return null;
   }
-
-  const breadcrumbItems = [];
-
-  segments.forEach((segment, index) => {
-    const isLast = index === segments.length - 1;
-
-    if (segment === "researcher") {
-      breadcrumbItems.push({
-        label: "Home",
-        href: "/",
-        isActive: false,
-      });
-      return;
-    }
-
-    const isResearcherSlug = segments[0] === "researcher" && index === 1;
-
-    if (isResearcherSlug) {
-      breadcrumbItems.push({
-        label: researcherTitle || formatSegmentLabel(segment),
-        href: slug ? `/researcher/${slug}` : buildSegmentHref(segments, index),
-        isActive: isLast,
-      });
-      return;
-    }
-
-    breadcrumbItems.push({
-      label: formatSegmentLabel(segment),
-      href: isLast ? null : buildSegmentHref(segments, index),
-      isActive: isLast,
-    });
-  });
 
   return (
     <nav aria-label="Breadcrumb" className="text-sm text-gray-500 mb-6">

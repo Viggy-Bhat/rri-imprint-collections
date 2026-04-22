@@ -243,6 +243,130 @@ export function getSidebarItems(sidebarItems) {
     });
 }
 
+function getGalleryBlocks(blocks) {
+  const items = Array.isArray(blocks) ? blocks : [];
+
+  return items.filter((block) => (block?.type || block?.block_type) === "gallery");
+}
+
+function getGalleryImageEntries(blocks) {
+  return getGalleryBlocks(blocks).flatMap((block) => {
+    const value = block?.value || {};
+    return Array.isArray(value?.images) ? value.images : [];
+  });
+}
+
+async function resolveGalleryImageEntry(entry, index = 0) {
+  const value = entry?.value || entry || {};
+  const imageValue = value?.image || value;
+
+  let imageId = null;
+  let imageUrl =
+    imageValue?.url ||
+    imageValue?.file?.url ||
+    imageValue?.meta?.download_url ||
+    value?.url ||
+    value?.file?.url ||
+    value?.meta?.download_url ||
+    "";
+
+  if (typeof imageUrl === "string" && imageUrl.startsWith("/")) {
+    imageUrl = `${WAGTAIL_BACKEND_BASE}${imageUrl}`;
+  }
+
+  if (typeof imageValue === "number") {
+    imageId = imageValue;
+  } else if (imageValue?.id) {
+    imageId = imageValue.id;
+  } else if (value?.id) {
+    imageId = value.id;
+  }
+
+  if (!imageUrl && imageId) {
+    const imageDetails = await fetchImageDetails(imageId);
+    imageUrl =
+      imageDetails?.file?.url ||
+      imageDetails?.url ||
+      imageDetails?.meta?.download_url ||
+      "";
+
+    if (typeof imageUrl === "string" && imageUrl.startsWith("/")) {
+      imageUrl = `${WAGTAIL_BACKEND_BASE}${imageUrl}`;
+    }
+  }
+
+  if (!imageUrl) {
+    return null;
+  }
+
+  const title = String(
+    imageValue?.title || value?.title || `Gallery image ${index + 1}`
+  ).trim();
+  const caption = String(value?.caption || imageValue?.caption || "").trim();
+  const aboutImageHtml = String(value?.about_image || imageValue?.about_image || "").trim();
+
+  return {
+    id: imageId,
+    url: imageUrl,
+    title,
+    caption,
+    aboutImageHtml,
+    alt: String(value?.alt || imageValue?.alt || caption || title || `Gallery image ${index + 1}`).trim(),
+  };
+}
+
+export async function getResearcherGalleryImages(researcher, sectionPages = []) {
+  const galleryEntries = [];
+  const sidebarItems = getSidebarItems(researcher?.sidebar_items);
+
+  const blockGroups = [];
+
+  sidebarItems.forEach((item) => {
+    if (Array.isArray(item?.smart_content)) {
+      blockGroups.push(item.smart_content);
+    }
+  });
+
+  blockGroups.forEach((blocks) => {
+    galleryEntries.push(...getGalleryImageEntries(blocks));
+  });
+
+  if (galleryEntries.length === 0 && researcher?.id) {
+    const sectionPage = Array.isArray(sectionPages)
+      ? sectionPages.find((page) => {
+          const slug = toSectionSlug(page?.meta?.slug || page?.slug || "");
+          const title = toSectionSlug(page?.title || "");
+          return slug === "gallery" || title === "gallery";
+        })
+      : null;
+
+    if (sectionPage) {
+      const galleryPage = await getResearcherSectionPageBySlug(
+        researcher.id,
+        sectionPage.meta?.slug || sectionPage.slug || "gallery"
+      );
+
+      if (galleryPage?.smart_content) {
+        galleryEntries.push(...getGalleryImageEntries(galleryPage.smart_content));
+      }
+    }
+  }
+
+  const normalized = await Promise.all(
+    galleryEntries.map((entry, index) => resolveGalleryImageEntry(entry, index))
+  );
+
+  return normalized
+    .filter(Boolean)
+    .filter((image, index, all) => {
+      return (
+        all.findIndex(
+          (entry) => entry.url === image.url || (entry.id && image.id && entry.id === image.id)
+        ) === index
+      );
+    });
+}
+
 export function getBiographySections(bioSections) {
   const blocks = Array.isArray(bioSections) ? bioSections : [];
 

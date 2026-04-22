@@ -8,7 +8,7 @@ function HomeListSkeletonItem() {
 
 export default function Loading() {
   return (
-    <main className="min-h-screen bg-gray-50 font-sans transition-opacity duration-300">
+    <main className="min-h-screen bg-transparent font-sans transition-opacity duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
         <header className="text-center mb-8 sm:mb-10 space-y-3">
           <div className="skeleton h-10 w-72 mx-auto rounded" />

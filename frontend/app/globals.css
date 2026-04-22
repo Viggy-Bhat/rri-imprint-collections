@@ -20,12 +20,18 @@ body {
   background-color: #f8f6f2;
   background-image: url("/assets/background/rri-pattern.png");
   background-repeat: repeat;
-  background-size: 600px;
-  background-attachment: fixed;
+  background-size: clamp(320px, 45vw, 600px);
+  background-attachment: scroll;
   color: #222;
   font-family: "Libre Baskerville", serif;
   line-height: 1.7;
   font-size: 16px;
+}
+
+@media (min-width: 768px) {
+  body {
+    background-attachment: fixed;
+  }
 }
 
 /* Academic Archive Typography */
@@ -57,9 +63,19 @@ p, li {
 
 /* Site Container with Overlay */
 .site-container {
-  background: rgba(255, 255, 255, 0.85);
-  min-height: 100vh;
+  background: linear-gradient(rgba(248, 246, 242, 0.8), rgba(248, 246, 242, 0.8));
+  min-height: auto;
   padding-bottom: 60px;
+}
+
+.archives-section {
+  margin-top: 40px;
+}
+
+@media (max-width: 767px) {
+  .site-container {
+    background: linear-gradient(rgba(248, 246, 242, 0.88), rgba(248, 246, 242, 0.88));
+  }
 }
 
 /* Rich Text Content Styling */

@@ -43,21 +43,23 @@ export function SidebarNavigation({ researcherSlug, sidebarItems = [], useHashLi
                 ? typeof window !== "undefined" && window.location.hash === hashHref
                 : pathname === href || pathname === `${href}/`;
 
-              const className = `block p-4 rounded-lg border-2 transition-all duration-200 ${
+              const className = `block p-4 rounded-lg border-2 transition-all duration-300 ${
                 isActive
                   ? "bg-white border-[#8b1c1c] shadow-md"
-                  : "bg-white/60 border-[#d9cfc1] hover:bg-white hover:border-[#c4b5a0]"
+                  : "group bg-white/60 border-[#d9cfc1] hover:bg-[#fff8ef] hover:border-[#c4b5a0] hover:-translate-y-0.5 hover:shadow-md"
               }`;
 
               const content = (
                 <>
                   <p className={`font-semibold text-sm leading-snug ${
-                    isActive ? "text-[#8b1c1c]" : "text-neutral-800"
+                    isActive
+                      ? "text-[#8b1c1c]"
+                      : "text-neutral-800 transition-colors duration-200 group-hover:text-[#8b1c1c]"
                   }`}>
                     {item.title}
                   </p>
                   {item.subtitle && (
-                    <p className="text-xs text-neutral-600 mt-1 leading-snug">
+                    <p className="text-xs text-neutral-600 mt-1 leading-snug transition-colors duration-200 group-hover:text-neutral-700">
                       {item.subtitle}
                     </p>
                   )}

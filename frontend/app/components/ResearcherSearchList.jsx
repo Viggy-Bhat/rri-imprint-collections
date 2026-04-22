@@ -3,8 +3,13 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 
-export function ResearcherSearchList({ researchers = [] }) {
+export function ResearcherSearchList({ researchers = [], labels = {} }) {
   const [query, setQuery] = useState("");
+  const {
+    search = "Search researchers",
+    countSuffix = "researchers",
+    noMatches = "No researchers match your search.",
+  } = labels;
 
   const filteredResearchers = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
@@ -22,7 +27,7 @@ export function ResearcherSearchList({ researchers = [] }) {
     <div className="space-y-5">
       <div className="space-y-2">
         <label htmlFor="researcher-search" className="block text-sm font-semibold tracking-wide text-red-800">
-          Search researchers
+          {search}
         </label>
         <input
           id="researcher-search"
@@ -35,11 +40,11 @@ export function ResearcherSearchList({ researchers = [] }) {
       </div>
 
       <p className="text-sm text-gray-600">
-        Showing {filteredResearchers.length} of {researchers.length} researchers
+        Showing {filteredResearchers.length} of {researchers.length} {countSuffix}
       </p>
 
       {filteredResearchers.length === 0 ? (
-        <p className="text-gray-600">No researchers match your search.</p>
+        <p className="text-gray-600">{noMatches}</p>
       ) : (
         <ol className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {filteredResearchers.map((page) => {
@@ -48,11 +53,11 @@ export function ResearcherSearchList({ researchers = [] }) {
             return (
               <li
                 key={page.id}
-                className="list-decimal list-inside marker:text-red-700 marker:font-semibold rounded-lg border border-red-100 bg-amber-50/40 px-3 py-2"
+                className="group list-decimal list-inside marker:text-red-700 marker:font-semibold rounded-lg border border-red-100 bg-amber-50/40 px-3 py-2 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:border-red-300 hover:bg-amber-100/50"
               >
                 <Link
                   href={`/researcher/${slug}`}
-                  className="text-gray-800 font-medium hover:text-red-700 hover:underline transition"
+                  className="text-gray-800 font-medium transition-colors duration-200 group-hover:text-red-900"
                 >
                   {page.title}
                 </Link>

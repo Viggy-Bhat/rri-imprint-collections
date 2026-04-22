@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Breadcrumb } from "@/app/components/Breadcrumb";
 import { ContentUnavailable } from "@/app/components/ContentUnavailable";
 import { SidebarContentPage } from "@/app/components/SidebarContentPage";
 import { ResearcherPageLayout } from "@/app/components/researcher/ResearcherPageLayout";
@@ -26,7 +25,7 @@ export default async function ResearcherSectionPage({ params: paramsPromise }) {
 
   if (!researcher) {
     return (
-      <main className="min-h-screen bg-gray-50 font-sans">
+      <main className="min-h-screen bg-transparent font-sans">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10 text-center">
           <h1 className="text-2xl font-bold text-red-600">Researcher Not Found</h1>
           <Link href="/" className="text-blue-600 hover:underline mt-4 inline-block">
@@ -83,9 +82,8 @@ export default async function ResearcherSectionPage({ params: paramsPromise }) {
       researcher={researcher}
       profileImageUrl={profileImageUrl}
       profileItems={profileItems}
+      showMobileProfileCard={false}
     >
-      <Breadcrumb researcherTitle={researcher.title} slug={slug} />
-
       <header className="space-y-2" aria-label="Section page header">
         <h1 className="text-3xl sm:text-4xl font-serif font-bold text-gray-900">{researcher.title}</h1>
         <p className="text-red-700 font-medium">{sectionTitle}</p>
@@ -94,7 +92,7 @@ export default async function ResearcherSectionPage({ params: paramsPromise }) {
       {sectionBlocks.length > 0 ? (
         <section className="rounded-2xl border border-red-100 bg-white/95 px-5 py-5 sm:px-7 sm:py-6 shadow-md">
           {sectionSubtitle ? <p className="text-gray-600 mb-4">{sectionSubtitle}</p> : null}
-          <SmartContentRenderer blocks={sectionBlocks} />
+          <SmartContentRenderer blocks={sectionBlocks} galleryHref={`/researchers/${slug}/gallery`} />
         </section>
       ) : (
         <SidebarContentPage

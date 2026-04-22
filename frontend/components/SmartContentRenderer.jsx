@@ -1,6 +1,6 @@
-import GalleryGridCarousel from "@/components/GalleryGridCarousel";
+import Link from "next/link";
 
-export default function SmartContentRenderer({ blocks }) {
+export default function SmartContentRenderer({ blocks, galleryHref }) {
   if (!blocks || blocks.length === 0) {
     return null;
   }
@@ -53,6 +53,18 @@ export default function SmartContentRenderer({ blocks }) {
                 <p>{data.thesis_title}</p>
 
                 {data.year && <p>{data.year}</p>}
+
+                {data.link && (
+                  <a
+                    href={data.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 inline-flex items-center gap-2 text-[#8b1c1c] underline"
+                  >
+                    Open Link
+                    <span aria-hidden="true">→</span>
+                  </a>
+                )}
               </div>
             );
 
@@ -84,11 +96,24 @@ export default function SmartContentRenderer({ blocks }) {
             const galleryImages = Array.isArray(data?.images) ? data.images : [];
 
             return (
-              <div key={index} className="card-academic p-6">
+              <div key={index} className="card-academic p-6 space-y-3">
                 {data?.title ? (
-                  <h3 className="text-xl font-semibold text-[#8b1c1c] mb-4">{data.title}</h3>
+                  <h3 className="text-xl font-semibold text-[#8b1c1c]">{data.title}</h3>
                 ) : null}
-                <GalleryGridCarousel images={galleryImages} />
+                <p className="text-sm text-gray-700">
+                  {galleryImages.length > 0
+                    ? `${galleryImages.length} gallery image${galleryImages.length === 1 ? "" : "s"} available.`
+                    : "Gallery images available."}
+                </p>
+                {galleryHref ? (
+                  <Link
+                    href={galleryHref}
+                    className="inline-flex items-center gap-2 text-[#8b1c1c] underline underline-offset-4"
+                  >
+                    View Full Gallery
+                    <span aria-hidden="true">→</span>
+                  </Link>
+                ) : null}
               </div>
             );
           }

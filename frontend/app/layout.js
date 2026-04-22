@@ -2,6 +2,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "../styles/smart-content.css";
 import { Footer } from "@/app/components/Footer";
+import { PageBreadcrumb } from "@/app/components/PageBreadcrumb";
+import SiteHeader from "@/components/SiteHeader";
 import { getSiteSettings } from "@/app/lib/siteSettingsApi";
 
 const geistSans = Geist({
@@ -29,7 +31,11 @@ export default async function RootLayout({ children }) {
     >
       <body className="min-h-full flex flex-col">
         <div className="site-container flex flex-col flex-1">
-          <main className="flex-1">{children}</main>
+          <main className="flex-1">
+            <SiteHeader />
+            <PageBreadcrumb />
+            {children}
+          </main>
           <Footer settings={siteSettings} />
         </div>
       </body>
