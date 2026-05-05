@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Django/runtime
+backend/static/
+backend/media/cache/
+backend/media/images/*.fill-*.jpg
+backend/media/images/*.fill-*.png
+backend/media/images/*.max-*.jpg
+backend/media/images/*.max-*.png
+
+# Node/Next
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Env and local files
+.env
+.env.*
+!.env.example
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/

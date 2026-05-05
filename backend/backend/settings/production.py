@@ -18,6 +18,11 @@ if not SECRET_KEY or SECRET_KEY.startswith("django-insecure-"):
         "Set DJANGO_SECRET_KEY to a strong non-default value in production."
     )
 
+if not os.getenv("DATABASE_URL"):
+    raise ImproperlyConfigured(
+        "Set DATABASE_URL in production (for example, PostgreSQL connection string)."
+    )
+
 ALLOWED_HOSTS = _csv_env("DJANGO_ALLOWED_HOSTS", default=[])
 if not ALLOWED_HOSTS:
     raise ImproperlyConfigured(
@@ -32,12 +37,13 @@ SESSION_COOKIE_SECURE = os.getenv("DJANGO_SESSION_COOKIE_SECURE", "1") == "1"
 CSRF_COOKIE_SECURE = os.getenv("DJANGO_CSRF_COOKIE_SECURE", "1") == "1"
 
 SECURE_HSTS_SECONDS = int(os.getenv("DJANGO_SECURE_HSTS_SECONDS", "31536000"))
-SECURE_HSTS_INCLUDE_SUBDOMAINS = os.getenv("DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS", "0") == "1"
-SECURE_HSTS_PRELOAD = os.getenv("DJANGO_SECURE_HSTS_PRELOAD", "0") == "1"
+SECURE_HSTS_INCLUDE_SUBDOMAINS = os.getenv("DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS", "1") == "1"
+SECURE_HSTS_PRELOAD = os.getenv("DJANGO_SECURE_HSTS_PRELOAD", "1") == "1"
 
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
 SECURE_REFERRER_POLICY = "same-origin"
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 MIDDLEWARE = [
     *MIDDLEWARE,

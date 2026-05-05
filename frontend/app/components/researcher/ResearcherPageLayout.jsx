@@ -8,33 +8,52 @@ export function ResearcherPageLayout({
   researcher,
   profileImageUrl,
   profileItems,
+  desktopSidebarContent,
+  desktopSidebarColumnContent,
+  mobileSidebarContent,
   mobileContent,
   mobileAfterProfile,
   mobileContentBeforeProfile = false,
+  showDesktopProfileCard = true,
   showMobileProfileCard = true,
+  useThreeColumnDesktop = false,
   useHashLinks = false,
   children,
 }) {
   return (
     <main className="min-h-screen bg-transparent font-sans">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-0 pb-6 sm:pb-8">
         <div className="hidden md:block">
-          <div className="flex flex-col gap-7 lg:gap-10 lg:flex-row lg:items-start">
+          <div
+            className={
+              useThreeColumnDesktop
+                ? "grid grid-cols-[240px_320px_minmax(0,1fr)] gap-6 items-start"
+                : "flex flex-col gap-7 lg:gap-10 lg:flex-row lg:items-start"
+            }
+          >
             <SidebarNavigation
               researcherSlug={slug}
               sidebarItems={sidebarItems}
               useHashLinks={useHashLinks}
             />
 
-            <article className="min-w-0 flex-1 space-y-7" aria-label="Researcher content">
+            {useThreeColumnDesktop && (desktopSidebarColumnContent || desktopSidebarContent) ? (
+              desktopSidebarColumnContent || desktopSidebarContent
+            ) : null}
+
+            <article className="min-w-0 flex-1 space-y-4" aria-label="Researcher content">
               {children}
             </article>
 
-            <ProfileCard
-              researcher={researcher}
-              profileImageUrl={profileImageUrl}
-              items={profileItems}
-            />
+            {useThreeColumnDesktop ? null : desktopSidebarContent ? (
+              desktopSidebarContent
+            ) : showDesktopProfileCard ? (
+              <ProfileCard
+                researcher={researcher}
+                profileImageUrl={profileImageUrl}
+                items={profileItems}
+              />
+            ) : null}
           </div>
         </div>
 
@@ -46,12 +65,14 @@ export function ResearcherPageLayout({
           />
 
           {mobileContentBeforeProfile ? (
-            <article className="min-w-0 space-y-7" aria-label="Researcher content">
+            <article className="min-w-0 space-y-4" aria-label="Researcher content">
               {mobileContent ?? children}
             </article>
           ) : null}
 
-          {showMobileProfileCard ? (
+          {mobileSidebarContent ? (
+            mobileSidebarContent
+          ) : showMobileProfileCard ? (
             <ProfileCard
               researcher={researcher}
               profileImageUrl={profileImageUrl}

@@ -1,2 +1,9 @@
 Django>=6,<6.1
 wagtail==7.3rc1
+django-cors-headers>=4.4,<5
+django-filter>=24.2,<25
+dj-database-url>=2.2,<3
+gunicorn>=22,<23
+mysqlclient>=2.2.0,<3
+psycopg2-binary>=2.9,<3
+redis>=5,<6

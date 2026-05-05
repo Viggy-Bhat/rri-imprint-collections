@@ -2,12 +2,12 @@ import { ProtectedImage } from "@/app/components/media/ProtectedImage";
 
 export function ProfileCard({ researcher, profileImageUrl, items = [] }) {
   return (
-    <aside className="w-full lg:w-80 xl:w-96 shrink-0">
+    <aside className="w-full max-w-md mx-auto lg:max-w-none lg:mx-0 lg:w-80 xl:w-96 shrink-0">
       <section
-        className="bg-amber-50/90 border border-red-100 p-4 sm:p-5 rounded-2xl shadow-md xl:sticky xl:top-6"
+        className="profile-summary-card bg-amber-50/90 border border-red-100 p-3 sm:p-5 rounded-2xl shadow-md xl:sticky xl:top-6"
         aria-labelledby="profile-summary-heading"
       >
-        <h2 id="profile-summary-heading" className="font-serif text-lg sm:text-xl text-red-800 border-b border-red-300 pb-3 mb-4">
+        <h2 id="profile-summary-heading" className="font-serif text-lg sm:text-xl text-red-800 border-b border-red-300 pb-2 sm:pb-3 mb-3 sm:mb-4 text-center">
           Profile Summary
         </h2>
 
@@ -15,8 +15,8 @@ export function ProfileCard({ researcher, profileImageUrl, items = [] }) {
           <ProtectedImage
             src={profileImageUrl}
             alt={researcher?.title || "Researcher"}
-            wrapperClassName="mb-4 w-full rounded-2xl overflow-hidden shadow-sm aspect-[4/5] md:aspect-auto"
-            className="block w-full h-full md:h-auto rounded-2xl object-cover object-center"
+            wrapperClassName="profile-summary-image mb-3 sm:mb-4 w-full rounded-2xl overflow-hidden shadow-sm aspect-[5/4] md:aspect-[4/5]"
+            className="block w-full h-full rounded-2xl object-cover object-center"
           />
         )}
 

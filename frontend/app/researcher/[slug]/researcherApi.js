@@ -92,20 +92,17 @@ export async function getResearcherSectionPageBySlug(researcherId, sectionSlug) 
 
 export async function getResearcherPageBySlugResult(slug) {
   try {
-    const listResponse = await fetch(WAGTAIL_PAGES_API, { cache: "no-store" });
+    const listResponse = await fetch(
+      `${WAGTAIL_PAGES_API}?type=researchers.ResearcherPage&slug=${slug}`,
+      { cache: "no-store" }
+    );
 
     if (!listResponse.ok) {
       return { researcher: null, sectionPages: [], hasError: true };
     }
 
     const listData = await listResponse.json();
-    const pages = Array.isArray(listData?.items) ? listData.items : [];
-
-    const researcherPages = pages.filter(
-      (page) => page?.meta?.type === "researchers.ResearcherPage"
-    );
-
-    const matchedPage = researcherPages.find((page) => page?.meta?.slug === slug);
+    const matchedPage = listData?.items?.[0];
 
     if (!matchedPage?.id) {
       return { researcher: null, sectionPages: [], hasError: false };

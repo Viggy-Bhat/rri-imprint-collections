@@ -113,6 +113,142 @@ npm install
 npm run dev
 ```
 
+## Deployment Guide
+
+### 1. Linux server setup (Ubuntu)
+
+```bash
+sudo apt update && sudo apt upgrade -y
+sudo apt install -y git curl build-essential nginx certbot python3-certbot-nginx python3-dev default-libmysqlclient-dev
+```
+
+### 2. Clone and dependency installation
+
+```bash
+git clone https://github.com/Viggy-Bhat/rri-imprint-collections.git
+cd rri-imprint-collections
+cp .env.example .env
+```
+
+Install backend/frontend dependencies:
+
+```bash
+# Backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r backend/requirements.txt
+
+# Frontend
+cd frontend
+npm ci
+cd ..
+```
+
+### 3. Environment variable configuration
+
+Edit .env and set production values:
+
+- DJANGO_SECRET_KEY
+- DJANGO_ALLOWED_HOSTS
+- DATABASE_URL (e.g., `mysql://db_user:db_password@127.0.0.1:3306/db_name`)
+- REDIS_URL
+- DJANGO_CORS_ALLOWED_ORIGINS
+- DJANGO_CSRF_TRUSTED_ORIGINS
+- NEXT_PUBLIC_WAGTAIL_BASE_URL (e.g., `http://your-backend-domain.com`)
+
+Set DJANGO_DEBUG=0 in production.
+
+### 4. Database migrations
+
+```bash
+cd backend
+source ../.venv/bin/activate
+DJANGO_SETTINGS_MODULE=backend.settings.production python manage.py migrate --noinput
+```
+
+### 5. Server startup instructions
+
+Backend startup command:
+
+```bash
+cd backend
+source ../.venv/bin/activate
+DJANGO_SETTINGS_MODULE=backend.settings.production gunicorn backend.wsgi:application --workers 4 --bind 0.0.0.0:8000 --timeout 120
+```
+
+Frontend startup command:
+
+```bash
+cd frontend
+npm run build
+npm run start -- -p 3000
+```
+
+### 6. Reverse proxy setup with nginx
+
+Create /etc/nginx/sites-available/rri-imprint:
+
+```nginx
+server {
+  listen 80;
+  server_name example.com www.example.com;
+
+  location /api/ {
+    proxy_pass http://127.0.0.1:8000;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  location /admin/ {
+    proxy_pass http://127.0.0.1:8000;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  location /documents/ {
+    proxy_pass http://127.0.0.1:8000;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  location /media/ {
+    proxy_pass http://127.0.0.1:8000;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+
+  location / {
+    proxy_pass http://127.0.0.1:3000;
+    proxy_set_header Host $host;
+    proxy_set_header X-Forwarded-Proto $scheme;
+  }
+}
+```
+
+Enable and reload:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/rri-imprint /etc/nginx/sites-enabled/rri-imprint
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+### 7. SSL configuration with certbot
+
+```bash
+sudo certbot --nginx -d example.com -d www.example.com
+sudo certbot renew --dry-run
+```
+
+After SSL is active, set:
+
+- DJANGO_SECURE_SSL_REDIRECT=1
+- DJANGO_SESSION_COOKIE_SECURE=1
+- DJANGO_CSRF_COOKIE_SECURE=1
+- DJANGO_SECURE_HSTS_SECONDS=31536000
+
 ## Validation Checklist
 
 - Backend starts without system check errors

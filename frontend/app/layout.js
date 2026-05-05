@@ -27,16 +27,19 @@ export default async function RootLayout({ children }) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <div className="site-container flex flex-col flex-1">
+      <body className="min-h-screen flex flex-col">
+        <div className=" flex flex-col  min-h-screen">
           <main className="flex-1">
             <SiteHeader />
             <PageBreadcrumb />
             {children}
           </main>
-          <Footer settings={siteSettings} />
+          
+          <div className="-mt-6 sm:-mt-8">
+            <Footer settings={siteSettings} />
+          </div>
         </div>
       </body>
     </html>

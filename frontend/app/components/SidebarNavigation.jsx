@@ -25,11 +25,11 @@ export function SidebarNavigation({ researcherSlug, sidebarItems = [], useHashLi
   return (
     <aside className="w-full lg:w-56 shrink-0">
       <Card className="p-6 space-y-4 bg-[#efe9dc] border-[#d9cfc1]">
-        <div className="space-y-2 pb-4 border-b-2 border-[#8b1c1c]/20">
+        <div className="space-y-2 pb-4 border-b-2 border-[#8b1c1c]/20 text-center">
           <h2 className="font-serif text-xl font-semibold text-[#8b1c1c]">
             Sections
           </h2>
-          <div className="h-1 w-12 bg-[#8b1c1c]"></div>
+          <div className="h-1 w-12 bg-[#8b1c1c] mx-auto"></div>
         </div>
 
         <nav className="space-y-3" aria-label="Sidebar navigation">
@@ -37,7 +37,10 @@ export function SidebarNavigation({ researcherSlug, sidebarItems = [], useHashLi
             <p className="text-neutral-600 text-sm py-4">No sections available</p>
           ) : (
             items.map((item) => {
-              const href = `/researcher/${researcherSlug}/section/${item.slug}`;
+              const isGalleryItem = item.slug === "gallery";
+              const href = isGalleryItem
+                ? `/researcher/${encodeURIComponent(researcherSlug)}/gallery`
+                : `/researcher/${researcherSlug}/section/${item.slug}`;
               const hashHref = `#${item.slug}`;
               const isActive = useHashLinks
                 ? typeof window !== "undefined" && window.location.hash === hashHref

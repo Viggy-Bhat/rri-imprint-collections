@@ -18,7 +18,7 @@ export function BiographySections({ sections = [] }) {
           </header>
 
           <div
-            className="cms-content rich-text-content px-5 sm:px-7 py-5 prose max-w-none text-gray-900 prose-p:leading-7 prose-a:text-red-700 prose-a:underline"
+            className="bio-section-content cms-content rich-text-content px-5 sm:px-7 py-5 prose max-w-none text-gray-900 prose-p:leading-7 prose-a:text-red-700 prose-a:underline"
             dangerouslySetInnerHTML={{ __html: section.content }}
           />
         </section>

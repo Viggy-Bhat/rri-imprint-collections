@@ -105,7 +105,7 @@ export function PageBreadcrumb() {
   }
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 pt-16 md:pt-8">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 pt-0 md:pt-0">
       <nav aria-label="Breadcrumb" className="text-sm sm:text-base text-red-900/80">
         <ol className="flex flex-wrap items-center gap-y-1">
           {items.map((item, index) => {
@@ -118,7 +118,7 @@ export function PageBreadcrumb() {
                     {item.label}
                   </span>
                 ) : (
-                  <Link href={item.href} className="hover:underline underline-offset-2">
+                  <Link href={item.href} className="hover:underline underline-offset-2 focus:outline-none focus-visible:outline-none">
                     {item.label}
                   </Link>
                 )}

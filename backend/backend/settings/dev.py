@@ -14,17 +14,28 @@ DEBUG = os.getenv("DJANGO_DEBUG", "1") == "1"
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv(
     "DJANGO_SECRET_KEY",
-    "django-insecure-1+m@9ye8w#fgv2)rhwd5gk*2+8f4#le#-q25%xf*4_$le3)^8d",
+    "dev-only-change-me-before-shared-deployments",
 )
 
 # SECURITY WARNING: define the correct hosts in production!
-ALLOWED_HOSTS = _csv_env("DJANGO_ALLOWED_HOSTS", default=["*"])
+ALLOWED_HOSTS = _csv_env(
+    "DJANGO_ALLOWED_HOSTS",
+    default=["127.0.0.1", "localhost", "testserver"],
+)
 
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # CORS Configuration for development
 CORS_ALLOWED_ORIGINS = _csv_env(
     "DJANGO_CORS_ALLOWED_ORIGINS",
+    default=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
+)
+
+CSRF_TRUSTED_ORIGINS = _csv_env(
+    "DJANGO_CSRF_TRUSTED_ORIGINS",
     default=[
         "http://localhost:3000",
         "http://127.0.0.1:3000",

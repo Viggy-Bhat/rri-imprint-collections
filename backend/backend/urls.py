@@ -9,7 +9,11 @@ from wagtail.documents import urls as wagtaildocs_urls
 from wagtail.api.v2.views import PagesAPIViewSet
 from wagtail.api.v2.router import WagtailAPIRouter
 from search import views as search_views
-from researchers.views import image_detail, site_settings_detail
+from researchers.views import (
+    image_detail,
+    researcher_section_filtered_items,
+    site_settings_detail,
+)
 
 api_router = WagtailAPIRouter("wagtailapi")
 
@@ -17,6 +21,11 @@ api_router.register_endpoint("pages", PagesAPIViewSet)
 
 urlpatterns = [
     path("api/v2/", api_router.urls),
+    path(
+        "api/researchers/<slug:slug>/sections/<slug:section_slug>/filtered-items/",
+        researcher_section_filtered_items,
+        name="researcher_section_filtered_items",
+    ),
     path("api/images/<int:pk>/", image_detail, name="image_detail"),
     path("api/site-settings/", site_settings_detail, name="site_settings_detail"),
     path("django-admin/", admin.site.urls),

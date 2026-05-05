@@ -1,63 +1,129 @@
+/* ===== SITE HEADER ===== */
+
 .siteHeader {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  padding: 0 12px;
   background-color: #f8f6f2;
+  padding: 28px 16px 10px;
+  margin: 0;
+  text-align: center;
 }
+
+.headerDivider {
+  width: min(100%, 80rem);
+  margin-top: 18px;
+  margin-bottom: 8px;
+  border-top: 1px solid #f4a3ad;
+}
+
+
+/* ===== HERO SECTION ===== */
 
 .heroSection {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 25px;
-  padding: 40px 20px;
-  text-align: center;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
 }
 
 .heroSectionCompact {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: clamp(8px, 1.8vw, 14px) 20px;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
 }
+
+
+/* ===== MAIN TITLE ===== */
 
 .heroTitle {
   margin: 0;
-  font-size: clamp(1.5rem, 3.2vw, 2.5rem);
+  font-size: clamp(1.7rem, 3vw, 2.6rem);
   color: #7a1c1c;
-  line-height: 1.04;
+  line-height: 1.1;
+  font-weight: 600;
 }
 
-
-.heroButtonFrame {
-  width: clamp(260px, 34vw, 500px);
-  height: clamp(100px, 12vw, 170px);
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.heroButton {
+.heroTitleCompact {
   margin: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-  transform: none;
-  border-radius: 8px;
+  font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+  color: #7a1c1c;
+  line-height: 1.1;
+  font-weight: 600;
 }
 
-/* Compact (non-home) header: keep emblem small and contained */
-.heroSectionCompact .heroButton {
-  width: clamp(140px, 22vw, 260px);
-  height: auto;
-  object-fit: contain;
-  transform: none;
-  border-radius: 10px;
+
+/* ===== IMPRINTS COLLECTION BADGE ===== */
+
+.imprintsBadge {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 9px 22px;
+
+  font-size: 1.05rem;
+  letter-spacing: 1.2px;
+  font-weight: 700;
+
+  color: #ffffff;
+  background-color: #8c1d1d;
+
+  border: 2px solid #8c1d1d;
+  border-radius: 6px;
+
+  position: relative;
+}
+
+/* inner border effect */
+.imprintsBadge::after {
+  content: "";
+  position: absolute;
+  inset: 3px;
+  border: 1px solid #ffffff;
+  border-radius: 4px;
+}
+
+
+/* ===== REMOVE EXTRA PAGE SPACING ===== */
+
+.siteHeader + main,
+.siteHeader + section,
+.siteHeader + div {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+
+/* ===== RESPONSIVE ===== */
+
+@media (max-width: 768px) {
+
+  .siteHeader {
+    padding: 22px 12px 8px;
+  }
+
+  .headerDivider {
+    margin-top: 14px;
+    margin-bottom: 6px;
+  }
+
+  .heroTitle {
+    font-size: 1.6rem;
+  }
+
+  .heroTitleCompact {
+    font-size: 1.5rem;
+  }
+
+  .imprintsBadge {
+    font-size: 0.95rem;
+    padding: 7px 18px;
+  }
+
 }

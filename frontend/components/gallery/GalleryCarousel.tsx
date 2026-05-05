@@ -72,6 +72,8 @@ export default function GalleryCarousel({
 
   const currentImage = images[activeIndex];
   const aboutImageHtml = String(currentImage?.aboutImageHtml || "").trim();
+  const imageCaption = String(currentImage?.caption || currentImage?.title || "").trim();
+  const shouldShowDetailsPanel = Boolean(aboutImageHtml || imageCaption);
 
   const nextImage = () => {
     onChange((activeIndex + 1) % images.length);
@@ -171,22 +173,29 @@ export default function GalleryCarousel({
             />
 
             <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/80 to-transparent px-4 pb-4 pt-12 text-center text-white md:px-6 md:pb-6">
-              <p className="truncate text-sm md:text-base">
-                {currentImage.caption || currentImage.title}
-              </p>
               <p className="mt-1 text-xs text-white/70 md:text-sm">
                 {activeIndex + 1} / {images.length}
               </p>
             </div>
           </div>
 
-          {aboutImageHtml ? (
+          {shouldShowDetailsPanel ? (
             <aside className="max-h-[85vh] overflow-y-auto rounded-2xl bg-white p-5 text-gray-800 md:w-90 md:p-6">
               <h3 className="mb-3 text-lg font-semibold text-gray-900">About this Image</h3>
-              <div
-                className="prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{ __html: aboutImageHtml }}
-              />
+              <div className="mb-4 border-b border-gray-200" />
+
+              {imageCaption ? (
+                <p className="mb-4 text-lg sm:text-xl font-bold text-gray-800">
+                  {imageCaption}
+                </p>
+              ) : null}
+
+              {aboutImageHtml ? (
+                <div
+                  className="prose prose-sm max-w-none"
+                  dangerouslySetInnerHTML={{ __html: aboutImageHtml }}
+                />
+              ) : null}
             </aside>
           ) : null}
         </div>

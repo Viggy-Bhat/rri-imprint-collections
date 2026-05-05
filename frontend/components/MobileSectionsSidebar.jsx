@@ -57,7 +57,10 @@ export default function MobileSectionsSidebar({
               <p className="text-sm text-neutral-600">No sections available</p>
             ) : (
               items.map((item) => {
-                const href = `/researcher/${researcherSlug}/section/${item.slug}`;
+                const isGalleryItem = item.slug === "gallery";
+                const href = isGalleryItem
+                  ? `/researchers/${encodeURIComponent(researcherSlug)}/gallery`
+                  : `/researcher/${encodeURIComponent(researcherSlug)}/section/${encodeURIComponent(item.slug)}`;
                 const hashHref = `#${item.slug}`;
 
                 const content = (

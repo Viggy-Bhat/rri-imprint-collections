@@ -69,7 +69,7 @@ p, li {
 }
 
 .archives-section {
-  margin-top: 40px;
+  margin-top: 16px;
 }
 
 @media (max-width: 767px) {
@@ -155,6 +155,10 @@ p, li {
   font-size: 1.25rem;
   margin-top: 1.5rem;
   margin-bottom: 0.75rem;
+}
+
+.bio-section-content {
+  text-align: justify;
 }
 
 /* CMS Academic Typography System */
@@ -369,4 +373,18 @@ p, li {
 
 .layout-profile {
   @apply lg:w-80 shrink-0;
+}
+
+/* Profile Summary Card - Mobile Only */
+@media (max-width: 768px) {
+  .profile-summary-card {
+    max-width: 340px;
+    margin: 0 auto;
+    padding: 14px;
+  }
+
+  .profile-summary-image {
+    display: block;
+    max-height: 260px;
+  }
 }
