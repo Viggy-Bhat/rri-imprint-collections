@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
+import { use } from "react";
 
-export default async function LegacyResearcherGalleryPage({ params: paramsPromise }) {
-  const params = await paramsPromise;
-  redirect(`/researchers/${params.slug}/gallery`);
+export default function LegacyResearcherGalleryPage({ params }) {
+  const { slug } = use(params);
+  redirect(`/researchers/${slug}/gallery`);
 }

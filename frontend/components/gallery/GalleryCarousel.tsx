@@ -2,7 +2,14 @@
 
 import Image from "next/image";
 import { useEffect, useState, type TouchEvent } from "react";
-import type { GalleryImage } from "./BentoGallery";
+export type GalleryImage = {
+  id?: number | null;
+  url: string;
+  title: string;
+  caption?: string;
+  aboutImageHtml?: string;
+  alt: string;
+};
 
 type GalleryCarouselProps = {
   images: GalleryImage[];

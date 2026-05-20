@@ -20,6 +20,10 @@ class RenditionImageChooserBlock(ImageChooserBlock):
 
     pass
 
+class TextBlock(blocks.RichTextBlock):
+    """Compatibility shim for historical migrations."""
+    pass
+
 
 class SectionItemBlock(blocks.StructBlock):
     title = blocks.CharBlock()

@@ -11,6 +11,9 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 from pathlib import Path
@@ -45,7 +48,6 @@ INSTALLED_APPS = [
     "home",
     "search",
     "corsheaders",
-    "django.contrib.postgres",
     "wagtail.contrib.forms",
     "wagtail.contrib.settings",
     "wagtail.contrib.redirects",
@@ -112,13 +114,19 @@ WSGI_APPLICATION = "backend.wsgi.application"
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL:
-    DATABASES = {
-        "default": dj_database_url.parse(
-            DATABASE_URL,
-            conn_max_age=env_int("DJANGO_DB_CONN_MAX_AGE", 60),
-            ssl_require=env_bool("DATABASE_SSL_REQUIRE", False),
-        )
-    }
+    db_config = dj_database_url.parse(
+        DATABASE_URL,
+        conn_max_age=env_int("DJANGO_DB_CONN_MAX_AGE", 60),
+        ssl_require=env_bool("DATABASE_SSL_REQUIRE", False),
+    )
+    # Enforce UTF-8 and strict mode for MariaDB/MySQL
+    if "mysql" in db_config.get("ENGINE", ""):
+        db_config.setdefault("OPTIONS", {})
+        db_config["OPTIONS"]["charset"] = "utf8mb4"
+        db_config["OPTIONS"]["init_command"] = (
+             "SET SESSION collation_connection = 'utf8mb4_general_ci'"
+          )
+    DATABASES = {"default": db_config}
 else:
     DATABASES = {
         "default": {
@@ -298,3 +306,6 @@ LOGGING = {
         },
     },
 }
+
+
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

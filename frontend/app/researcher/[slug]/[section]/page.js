@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
+import { use } from "react";
 
-export default async function LegacySectionRoute({ params: paramsPromise }) {
-  const params = await paramsPromise;
-  redirect(`/researcher/${params.slug}/section/${params.section}`);
+export default function LegacySectionRoute({ params }) {
+  const { slug, section } = use(params);
+  redirect(`/researcher/${slug}/section/${section}`);
 }

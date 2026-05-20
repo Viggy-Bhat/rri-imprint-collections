@@ -20,7 +20,7 @@ if not SECRET_KEY or SECRET_KEY.startswith("django-insecure-"):
 
 if not os.getenv("DATABASE_URL"):
     raise ImproperlyConfigured(
-        "Set DATABASE_URL in production (for example, PostgreSQL connection string)."
+        "Set DATABASE_URL in production (for example, MariaDB or PostgreSQL connection string)."
     )
 
 ALLOWED_HOSTS = _csv_env("DJANGO_ALLOWED_HOSTS", default=[])

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import BentoGallery from "@/components/gallery/BentoGallery";
+import ResearcherGalleryViewer from "@/components/gallery/ResearcherGalleryViewer";
 import {
   getResearcherGalleryImages,
   getResearcherPageBySlugResult,
@@ -21,9 +21,9 @@ export default async function ResearcherGalleryPage({ params }: GalleryPageProps
   const galleryImages = await getResearcherGalleryImages(researcher, sectionPages);
 
   return (
-    <main className="min-h-screen bg-transparent font-sans">
-      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12">
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <main className="bg-[#F5F0EB] font-sans">
+      <div className="mx-auto max-w-7xl px-4 pt-4 pb-8 sm:px-6 sm:pt-6 sm:pb-10">
+        <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-sm font-medium uppercase tracking-[0.25em] text-red-700/80">
               Gallery
@@ -41,7 +41,7 @@ export default async function ResearcherGalleryPage({ params }: GalleryPageProps
           </Link>
         </div>
 
-        <BentoGallery images={galleryImages} />
+        <ResearcherGalleryViewer images={galleryImages} />
       </div>
     </main>
   );

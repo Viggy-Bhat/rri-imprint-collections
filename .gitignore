@@ -25,3 +25,29 @@ frontend/out/
 .DS_Store
 .idea/
 .vscode/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Database safety
+*.sqlite3
+
+# Backups
+backups/*.sql
+backups/**/*.sql
+backups/**/*.json
+
+# Logs
+*.log
+
+# Python tooling
+.pytest_cache/
+.mypy_cache/
+
+# Production static files
+backend/staticfiles/
+
+# Temporary files
+*~

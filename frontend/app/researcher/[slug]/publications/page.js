@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
+import { use } from "react";
 
-export default async function PublicationsPage({ params: paramsPromise }) {
-  const params = await paramsPromise;
-  redirect(`/researcher/${params.slug}/section/publications`);
+export default function PublicationsPage({ params }) {
+  const { slug } = use(params);
+  redirect(`/researcher/${slug}/section/publications`);
 }
