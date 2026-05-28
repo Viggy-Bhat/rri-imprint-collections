@@ -127,20 +127,6 @@ export async function getResearcherPageBySlugResult(slug) {
   }
 }
 
-export async function getResearcherPageBySlug(slug) {
-  const { researcher } = await getResearcherPageBySlugResult(slug);
-  return researcher;
-}
-
-export function normalizeContentBlocks(content) {
-  const blocks = Array.isArray(content) ? content : [];
-
-  return blocks.map((block) => ({
-    ...block,
-    type: block?.type || block?.block_type,
-  }));
-}
-
 export function toSectionSlug(value) {
   return String(value || "")
     .toLowerCase()
@@ -148,32 +134,6 @@ export function toSectionSlug(value) {
     .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
-}
-
-export function getSections(content) {
-  const blocks = normalizeContentBlocks(content);
-
-  return blocks
-    .filter((block) => block.type === "section")
-    .map((block) => {
-      const title = String(block?.value?.title || "").trim();
-      const slugFromContent = String(block?.value?.slug || "").trim();
-      const slug = toSectionSlug(slugFromContent || title);
-
-      if (!title || !slug) {
-        return null;
-      }
-
-      return {
-        ...block,
-        value: {
-          ...block.value,
-          title,
-          slug,
-        },
-      };
-    })
-    .filter(Boolean);
 }
 
 export function getSidebarItems(sidebarItems) {
