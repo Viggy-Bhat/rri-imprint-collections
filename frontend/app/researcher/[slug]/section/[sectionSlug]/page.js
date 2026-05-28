@@ -4,6 +4,7 @@ import { FilterableArchiveSection } from "@/app/components/FilterableArchiveSect
 import { SidebarContentPage } from "@/app/components/SidebarContentPage";
 import { ResearcherPageLayout } from "@/app/components/researcher/ResearcherPageLayout";
 import SmartContentRenderer from "@/components/SmartContentRenderer";
+import { getWagtailBackendBaseUrl } from "@/app/lib/config";
 import {
   getSidebarItems,
   getSidebarItemsFromSectionPages,
@@ -29,59 +30,19 @@ function isFilterTargetSection(sectionSlug, sectionTitle) {
   return targetSlugs.has(normalizedSlug) || targetSlugs.has(normalizedTitle);
 }
 
-function getFilterItemsFromBlocks(blocks) {
-  const source = Array.isArray(blocks) ? blocks : [];
+function getSectionType(sectionSlug, sectionTitle) {
+  const slug = toSectionSlug(sectionSlug);
+  const title = toSectionSlug(sectionTitle || "");
 
-  return source
-    .map((block) => {
-      const type = block?.type || block?.block_type;
-      const value = block?.value || {};
+  if (slug.includes("guidance") || title.includes("guidance")) {
+    return "guidance";
+  }
 
-      if (type === "publication") {
-        const title = String(value?.title || "").trim();
-        if (!title) {
-          return null;
-        }
+  if (slug.includes("news") || title.includes("news")) {
+    return "news";
+  }
 
-        const journal = String(value?.journal || "").trim();
-        const year = String(value?.year || "").trim();
-        const link = String(value?.link || "").trim();
-
-        return {
-          title,
-          link,
-          tag: journal ? `Journal: ${journal}` : "",
-          meta_text: year ? `Year: ${year}` : "",
-          journal,
-          year,
-        };
-      }
-
-      if (type === "guidance") {
-        const title = String(value?.thesis_title || value?.title || "").trim();
-        if (!title) {
-          return null;
-        }
-
-        const author = String(value?.student_name || "").trim();
-        const year = String(value?.year || "").trim();
-        const link = String(value?.link || "").trim();
-        const description = String(value?.description || "").trim();
-
-        return {
-          title,
-          link,
-          tag: author ? `Author: ${author}` : "",
-          meta_text: year ? `Year: ${year}` : "",
-          description,
-          author,
-          year,
-        };
-      }
-
-      return null;
-    })
-    .filter(Boolean);
+  return "publications";
 }
 
 export default async function ResearcherSectionPage({
@@ -148,9 +109,26 @@ export default async function ResearcherSectionPage({
   const sectionSubtitle =
     sectionPage?.subtitle || currentStreamSection?.subtitle || "";
   const shouldHideProfileCard = isFilterTargetSection(normalizedSectionSlug, sectionTitle);
-  const fallbackFilterItems = getFilterItemsFromBlocks(sectionBlocks);
-  const filterItems = sectionItems.length > 0 ? sectionItems : fallbackFilterItems;
-  const shouldRenderFilterPanel = shouldHideProfileCard && filterItems.length > 0;
+  const sectionType = getSectionType(normalizedSectionSlug, sectionTitle);
+
+  let itemCount = 0;
+
+  if (shouldHideProfileCard) {
+    const baseUrl = getWagtailBackendBaseUrl();
+    const countUrl = `${baseUrl}/api/researchers/${encodeURIComponent(slug)}/sections/${encodeURIComponent(normalizedSectionSlug)}/count/`;
+
+    try {
+      const countRes = await fetch(countUrl, { next: { revalidate: 300 } });
+      if (countRes.ok) {
+        const countData = await countRes.json();
+        itemCount = countData.total || 0;
+      }
+    } catch {
+      itemCount = 0;
+    }
+  }
+
+  const shouldRenderFilterPanel = shouldHideProfileCard && itemCount > 0;
 
   return (
     <ResearcherPageLayout
@@ -169,9 +147,8 @@ export default async function ResearcherSectionPage({
 
       {shouldRenderFilterPanel ? (
         <FilterableArchiveSection
-          items={filterItems}
           researcherSlug={slug}
-          sectionSlug={normalizedSectionSlug}
+          sectionType={sectionType}
         />
       ) : sectionBlocks.length > 0 ? (
         <section className="rounded-2xl border border-red-100 bg-white/95 px-5 py-5 sm:px-7 sm:py-6 shadow-md">

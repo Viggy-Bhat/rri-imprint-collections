@@ -83,7 +83,7 @@ export default function ResearcherGalleryViewer({ images }) {
                     key={`thumb-${image.id || image.url}-${index}`}
                     type="button"
                     onClick={() => setSelectedIndex(index)}
-                    className={`relative flex h-[75px] w-[100px] shrink-0 overflow-hidden rounded-md transition-all duration-200 lg:aspect-square lg:w-full ${
+                    className={`relative flex h-[90px] w-[90px] shrink-0 overflow-hidden rounded-md transition-all duration-200 lg:aspect-square lg:w-full ${
                       isActive
                         ? "ring-2 ring-[#8b1a1a] ring-inset opacity-100"
                         : "opacity-60 hover:opacity-100"
@@ -94,7 +94,7 @@ export default function ResearcherGalleryViewer({ images }) {
                       alt={image.alt}
                       fill
                       unoptimized={shouldDisableOptimization(image.url)}
-                      className="object-cover"
+                      className="object-contain"
                       sizes="(max-width: 1024px) 100px, 30vw"
                     />
 

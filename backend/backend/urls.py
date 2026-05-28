@@ -9,6 +9,12 @@ from wagtail.documents import urls as wagtaildocs_urls
 from wagtail.api.v2.views import PagesAPIViewSet
 from wagtail.api.v2.router import WagtailAPIRouter
 from search import views as search_views
+from researchers.api.archive_views import (
+    researcher_guidance,
+    researcher_news,
+    researcher_publications,
+    researcher_section_count,
+)
 from researchers.views import (
     image_detail,
     researcher_section_filtered_items,
@@ -25,6 +31,26 @@ urlpatterns = [
         "api/researchers/<slug:slug>/sections/<slug:section_slug>/filtered-items/",
         researcher_section_filtered_items,
         name="researcher_section_filtered_items",
+    ),
+    path(
+        "api/researchers/<slug:slug>/sections/<slug:section_slug>/count/",
+        researcher_section_count,
+        name="researcher_section_count",
+    ),
+    path(
+        "api/researchers/<slug:slug>/publications/",
+        researcher_publications,
+        name="researcher_publications",
+    ),
+    path(
+        "api/researchers/<slug:slug>/guidance/",
+        researcher_guidance,
+        name="researcher_guidance",
+    ),
+    path(
+        "api/researchers/<slug:slug>/news/",
+        researcher_news,
+        name="researcher_news",
     ),
     path("api/images/<int:pk>/", image_detail, name="image_detail"),
     path("api/site-settings/", site_settings_detail, name="site_settings_detail"),

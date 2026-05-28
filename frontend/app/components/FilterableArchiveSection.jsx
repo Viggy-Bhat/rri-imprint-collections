@@ -1,149 +1,39 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { SidebarItemCard } from "@/app/components/SidebarItemCard";
 import { getWagtailBackendBaseUrl } from "@/app/lib/config";
 import ArchiveFilterPanel from "@/components/ArchiveFilterPanel";
 
 const WAGTAIL_BACKEND_BASE = getWagtailBackendBaseUrl();
+const PAGE_SIZE = 10;
 
-function toPlainText(value) {
-  return String(value || "")
-    .replace(/<[^>]*>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-function extractLabeledSegment(source, labels) {
-  const text = toPlainText(source);
-
-  if (!text) {
-    return "";
-  }
-
-  for (const label of labels) {
-    const expression = new RegExp(`${label}\\s*[:\\-]\\s*([^|,;\\n]+)`, "i");
-    const match = text.match(expression);
-
-    if (match?.[1]) {
-      return String(match[1]).trim();
-    }
-  }
-
-  return "";
-}
-
-function getAuthor(publication) {
-  return (
-    extractLabeledSegment(publication?.meta_text, ["author", "authors"]) ||
-    extractLabeledSegment(publication?.description, ["author", "authors"]) ||
-    toPlainText(publication?.author)
-  );
-}
-
-function getJournal(publication) {
-  return (
-    extractLabeledSegment(publication?.meta_text, ["journal", "published in", "publication", "conference"]) ||
-    extractLabeledSegment(publication?.description, ["journal", "published in", "publication", "conference"]) ||
-    toPlainText(publication?.journal)
-  );
-}
-
-function getYear(publication) {
-  const directYear = Number(publication?.year);
-  if (Number.isFinite(directYear) && directYear > 0) {
-    return directYear;
-  }
-
-  const text = [publication?.meta_text, publication?.description, publication?.tag]
-    .map(toPlainText)
-    .filter(Boolean)
-    .join(" ");
-
-  const yearMatch = text.match(/\b(19|20)\d{2}\b/);
-  return yearMatch ? Number(yearMatch[0]) : null;
-}
-
-function sortResults(results, sortOption) {
-  const sorted = [...results];
-
-  switch (sortOption) {
-    case "title_desc":
-      return sorted.sort((a, b) => String(b?.title || "").localeCompare(String(a?.title || "")));
-    case "author_asc":
-      return sorted.sort((a, b) => getAuthor(a).localeCompare(getAuthor(b)));
-    case "author_desc":
-      return sorted.sort((a, b) => getAuthor(b).localeCompare(getAuthor(a)));
-    case "journal_asc":
-      return sorted.sort((a, b) => getJournal(a).localeCompare(getJournal(b)));
-    case "newest":
-      return sorted.sort((a, b) => (getYear(b) || 0) - (getYear(a) || 0));
-    case "oldest":
-      return sorted.sort((a, b) => (getYear(a) || 0) - (getYear(b) || 0));
-    case "title_asc":
-    default:
-      return sorted.sort((a, b) => String(a?.title || "").localeCompare(String(b?.title || "")));
-  }
-}
-
-function filterResultsLocally(items, searchTerm, sortOption, year) {
-  const publications = Array.isArray(items) ? items : [];
-  const normalizedSearch = String(searchTerm || "").toLowerCase().trim();
-  const yearNumber = Number(year);
-  const hasYear = Number.isFinite(yearNumber) && String(year || "").trim() !== "";
-
-  let results = publications;
-
-  if (normalizedSearch) {
-    results = results.filter((publication) => {
-      const searchMatch =
-        toPlainText(publication?.title).toLowerCase().includes(normalizedSearch) ||
-        getAuthor(publication).toLowerCase().includes(normalizedSearch) ||
-        getJournal(publication).toLowerCase().includes(normalizedSearch);
-
-      return searchMatch;
-    });
-  }
-
-  if (hasYear) {
-    results = results.filter((publication) => getYear(publication) === yearNumber);
-  }
-
-  return sortResults(results, sortOption || "title_asc");
-}
-
-export function FilterableArchiveSection({ items = [], researcherSlug, sectionSlug }) {
-  const publications = useMemo(() => (Array.isArray(items) ? items : []), [items]);
+export function FilterableArchiveSection({ researcherSlug, sectionType }) {
+  const [items, setItems] = useState([]);
+  const [total, setTotal] = useState(0);
+  const [offset, setOffset] = useState(0);
+  const [hasNext, setHasNext] = useState(false);
+  const [hasPrevious, setHasPrevious] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const [draftSearchTerm, setDraftSearchTerm] = useState("");
   const [draftSortOption, setDraftSortOption] = useState("title_asc");
   const [draftYear, setDraftYear] = useState("");
-  const [displayedResults, setDisplayedResults] = useState(publications);
-  const [isApplyingFilters, setIsApplyingFilters] = useState(false);
 
-  useEffect(() => {
-    setDisplayedResults(publications);
-    setDraftSearchTerm("");
-    setDraftSortOption("title_asc");
-    setDraftYear("");
-    setIsApplyingFilters(false);
-  }, [publications]);
-
-  async function handleApplyFilters() {
-    const searchTerm = draftSearchTerm.trim();
-    const sortOption = draftSortOption || "title_asc";
-    const year = draftYear.trim();
-
-    if (!researcherSlug || !sectionSlug) {
-      setDisplayedResults(filterResultsLocally(publications, searchTerm, sortOption, year));
+  const fetchPage = useCallback(async (newOffset, searchTerm, sortOption, year) => {
+    if (!researcherSlug || !sectionType) {
       return;
     }
 
-    setIsApplyingFilters(true);
+    setIsLoading(true);
+    setError(null);
 
     try {
       const query = new URLSearchParams();
-      query.set("sort", sortOption);
+      query.set("limit", String(PAGE_SIZE));
+      query.set("offset", String(Math.max(newOffset, 0)));
+      query.set("sort", sortOption || "title_asc");
 
       if (searchTerm) {
         query.set("search", searchTerm);
@@ -154,35 +44,74 @@ export function FilterableArchiveSection({ items = [], researcherSlug, sectionSl
       }
 
       const response = await fetch(
-        `${WAGTAIL_BACKEND_BASE}/api/researchers/${encodeURIComponent(researcherSlug)}/sections/${encodeURIComponent(sectionSlug)}/filtered-items/?${query.toString()}`,
-        { cache: "no-store" }
+        `${WAGTAIL_BACKEND_BASE}/api/researchers/${encodeURIComponent(researcherSlug)}/${encodeURIComponent(sectionType)}/?${query.toString()}`
       );
 
       if (!response.ok) {
-        throw new Error(`Filtered items request failed with status ${response.status}`);
+        throw new Error(`Request failed with status ${response.status}`);
       }
 
       const data = await response.json();
 
-      if (!Array.isArray(data?.items)) {
-        throw new Error("Filtered items payload is invalid");
-      }
-
-      setDisplayedResults(data.items);
-    } catch (error) {
-      console.error("[FilterableArchiveSection] Falling back to local filtering:", error);
-      setDisplayedResults(filterResultsLocally(publications, searchTerm, sortOption, year));
+      setItems(Array.isArray(data.items) ? data.items : []);
+      setTotal(data.total || 0);
+      setOffset(data.offset || 0);
+      setHasNext(!!data.has_next);
+      setHasPrevious(!!data.has_previous);
+    } catch (err) {
+      console.error("[FilterableArchiveSection] Failed to fetch page:", err);
+      setError(err.message);
     } finally {
-      setIsApplyingFilters(false);
+      setIsLoading(false);
     }
+  }, [researcherSlug, sectionType]);
+
+  useEffect(() => {
+    setDraftSearchTerm("");
+    setDraftSortOption("title_asc");
+    setDraftYear("");
+    fetchPage(0, "", "title_asc", "");
+  }, [fetchPage]);
+
+  function handleApplyFilters() {
+    const searchTerm = draftSearchTerm.trim();
+    const sortOption = draftSortOption || "title_asc";
+    const year = draftYear.trim();
+    setOffset(0);
+    fetchPage(0, searchTerm, sortOption, year);
   }
 
   function handleResetFilters() {
     setDraftSearchTerm("");
     setDraftSortOption("title_asc");
     setDraftYear("");
-    setDisplayedResults(publications);
+    setOffset(0);
+    fetchPage(0, "", "title_asc", "");
   }
+
+  function handleRetry() {
+    fetchPage(offset, draftSearchTerm.trim(), draftSortOption, draftYear.trim());
+  }
+
+  function handleNextPage() {
+    if (hasNext && !isLoading) {
+      fetchPage(offset + PAGE_SIZE, draftSearchTerm.trim(), draftSortOption, draftYear.trim());
+    }
+  }
+
+  function handlePreviousPage() {
+    if (hasPrevious && !isLoading) {
+      fetchPage(offset - PAGE_SIZE, draftSearchTerm.trim(), draftSortOption, draftYear.trim());
+    }
+  }
+
+  const startItem = total > 0 ? offset + 1 : 0;
+  const endItem = Math.min(offset + PAGE_SIZE, total);
+
+  const hasActiveFilters = draftSearchTerm.trim() || draftYear.trim() || draftSortOption !== "title_asc";
+  const isEmptyState = !isLoading && !error && items.length === 0;
+  const isNoItemsAtAll = isEmptyState && total === 0 && !hasActiveFilters;
+  const isNoMatchAfterFilter = isEmptyState && total > 0;
 
   return (
     <div className="mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_340px] xl:grid-cols-[minmax(0,1fr)_360px] lg:gap-8">
@@ -200,19 +129,71 @@ export function FilterableArchiveSection({ items = [], researcherSlug, sectionSl
       </div>
 
       <div className="min-w-0 w-full order-2 lg:order-1">
-        {isApplyingFilters ? (
-          <p className="text-gray-600">Loading filtered results...</p>
-        ) : displayedResults.length === 0 ? (
-          <p className="text-gray-600">No items match the current filters.</p>
-        ) : (
-          <div className="space-y-3 w-full">
-            {displayedResults.map((item, index) => (
-              <SidebarItemCard
-                key={`${item.title}-${item.meta_text || index}`}
-                item={item}
-              />
+        {isLoading && (
+          <div className="space-y-3">
+            {Array.from({ length: PAGE_SIZE }).map((_, i) => (
+              <div key={i} className="animate-pulse rounded-xl border border-red-100 bg-white/95 px-5 py-4">
+                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+                <div className="h-3 bg-gray-100 rounded w-1/2"></div>
+              </div>
             ))}
           </div>
+        )}
+
+        {error && !isLoading && (
+          <div className="rounded-xl border border-red-200 bg-red-50 px-5 py-4">
+            <p className="text-red-700 font-medium">Failed to load items</p>
+            <button onClick={handleRetry} className="text-sm text-red-600 underline mt-1">
+              Try again
+            </button>
+          </div>
+        )}
+
+        {isNoItemsAtAll && (
+          <p className="text-gray-600">No items available in this section.</p>
+        )}
+
+        {isNoMatchAfterFilter && (
+          <p className="text-gray-600">No items match your filters. Try adjusting your search.</p>
+        )}
+
+        {!isLoading && !error && items.length > 0 && (
+          <>
+            <div className="space-y-3 w-full">
+              {items.map((item, index) => (
+                <SidebarItemCard
+                  key={`item-${offset}-${index}`}
+                  item={item}
+                />
+              ))}
+            </div>
+
+            {total > PAGE_SIZE ? (
+              <div className="flex items-center justify-between mt-5 pt-4 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={handlePreviousPage}
+                  disabled={!hasPrevious || isLoading}
+                  className="px-3 py-1.5 text-sm rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                >
+                  &larr; Previous
+                </button>
+
+                <span className="text-sm text-gray-600">
+                  Showing {startItem}&ndash;{endItem} of {total}
+                </span>
+
+                <button
+                  type="button"
+                  onClick={handleNextPage}
+                  disabled={!hasNext || isLoading}
+                  className="px-3 py-1.5 text-sm rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
+                >
+                  Next &rarr;
+                </button>
+              </div>
+            ) : null}
+          </>
         )}
       </div>
     </div>
