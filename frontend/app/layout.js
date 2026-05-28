@@ -1,7 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import "../styles/smart-content.css";
-import { Footer } from "@/app/components/Footer";
+import { Footer } from "@/app/components/Footer.jsx";
 import { PageBreadcrumb } from "@/app/components/PageBreadcrumb";
 import SiteHeader from "@/components/SiteHeader";
 import { getSiteSettings } from "@/app/lib/siteSettingsApi";

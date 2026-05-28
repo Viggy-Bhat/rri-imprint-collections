@@ -18,10 +18,6 @@
 /* Global Background Pattern */
 body {
   background-color: #f8f6f2;
-  background-image: url("/assets/background/rri-pattern.png");
-  background-repeat: repeat;
-  background-size: clamp(320px, 45vw, 600px);
-  background-attachment: scroll;
   color: #222;
   font-family: "Libre Baskerville", serif;
   line-height: 1.7;
