@@ -9,14 +9,16 @@
         h1 { font-size: 2.5em; margin-bottom: 10px; }
         .field-label { color: #0066cc; font-size: 1.2em; margin-bottom: 30px; }
         .profile-image { width: 200px; height: auto; margin: 20px 0; border-radius: 8px; }
-        .content-section { margin: 30px 0; padding: 20px; border-left: 4px solid #0066cc; background: #f9f9f9; }
-        .bio-block { font-size: 1.1em; line-height: 1.8; }
-        .publication-block { background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 8px; margin: 15px 0; }
-        .publication-block h3 { margin-top: 0; color: #0066cc; }
-        .publication-meta { font-size: 0.95em; color: #666; }
-        .guidance-block { padding: 12px; background: #f0f0f0; border-radius: 5px; margin: 10px 0; }
-        .guidance-title { font-weight: bold; color: #333; display: block; margin-bottom: 6px; }
-        .guidance-description { color: #666; }
+        .profile-items { margin: 15px 0; }
+        .profile-items dt { font-weight: bold; color: #0066cc; display: inline; }
+        .profile-items dd { display: inline; margin-left: 5px; margin-right: 20px; }
+        .bio-section { margin: 30px 0; padding: 20px; border-left: 4px solid #0066cc; background: #f9f9f9; }
+        .bio-section h2 { margin-top: 0; color: #333; }
+        .bio-section .rich-text { font-size: 1.1em; line-height: 1.8; }
+        .sidebar-section { margin: 20px 0; padding: 15px; background: #f0f0f0; border-radius: 8px; }
+        .sidebar-section h3 { margin-top: 0; color: #0066cc; }
+        .sidebar-item { padding: 8px 0; border-bottom: 1px solid #ddd; }
+        .sidebar-item:last-child { border-bottom: none; }
         hr { border: none; border-top: 1px solid #ddd; margin: 40px 0; }
     </style>
 </head>
@@ -26,46 +28,50 @@
     <p class="field-label"><strong>Field of Study:</strong> {{ page.field }}</p>
 
     {% if page.profile_image %}
-        <img src="{{ page.profile_image.file.url }}" alt="{{ page.title }}" class="profile-image" />
+        {% image page.profile_image max-400x400 as profile_img %}
+        <img src="{{ profile_img.url }}" alt="{{ page.title }}" class="profile-image" />
+    {% endif %}
+
+    {% if page.profile_items %}
+    <dl class="profile-items">
+        {% for item in page.profile_items %}
+            <dt>{{ item.value.label }}:</dt>
+            <dd>{{ item.value.value }}</dd>
+        {% endfor %}
+    </dl>
     {% endif %}
 
     <hr>
 
-    <!-- Dynamic Content Blocks -->
-    {% for block in page.content %}
-
-        <!-- BIO BLOCK -->
-        {% if block.block_type == "bio" %}
-            <div class="content-section bio-block">
-                {{ block.value|richtext }}
-            </div>
-        {% endif %}
-
-        <!-- PUBLICATION BLOCK -->
-        {% if block.block_type == "publication" %}
-            <div class="publication-block">
-                <h3>{{ block.value.title }}</h3>
-                <p class="publication-meta">
-                    <strong>Journal:</strong> {{ block.value.journal }}<br>
-                    <strong>Year:</strong> {{ block.value.year }}
-                </p>
-                {% if block.value.link %}
-                    <p><a href="{{ block.value.link }}" target="_blank" rel="noopener noreferrer">📎 Read Publication</a></p>
-                {% endif %}
-            </div>
-        {% endif %}
-
-        <!-- GUIDANCE BLOCK -->
-        {% if block.block_type == "guidance" %}
-            <div class="guidance-block">
-                <span class="guidance-title">{{ block.value.title }}</span>
-                <div class="guidance-description">{{ block.value.description }}</div>
-            </div>
-        {% endif %}
-
+    {% for block in page.bio_sections %}
+        <div class="bio-section">
+            <h2>{{ block.value.title }}</h2>
+            <div class="rich-text">{{ block.value.content }}</div>
+        </div>
     {% empty %}
-        <p><em>No content blocks added yet.</em></p>
+        <p><em>No biography sections added yet.</em></p>
     {% endfor %}
+
+    {% if page.sidebar_items %}
+    <hr>
+    <h2>Sidebar Content</h2>
+    {% for sidebar in page.sidebar_items %}
+        <div class="sidebar-section">
+            <h3>{{ sidebar.value.title }}</h3>
+            {% if sidebar.value.subtitle %}
+                <p>{{ sidebar.value.subtitle }}</p>
+            {% endif %}
+            {% for item in sidebar.value.items %}
+                <div class="sidebar-item">
+                    <strong>{{ item.value.title }}</strong>
+                    {% if item.value.link %}
+                        — <a href="{{ item.value.link }}">Link</a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+    {% endif %}
 
     <hr>
     <footer style="text-align: center; color: #999; font-size: 0.9em;">
