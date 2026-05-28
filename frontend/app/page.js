@@ -1,5 +1,5 @@
-import { ResearcherSearchList } from "@/app/components/ResearcherSearchList";
-import { ContentUnavailable } from "@/app/components/ContentUnavailable";
+import { ResearcherSearchList } from "@/components/ResearcherSearchList";
+import { ContentUnavailable } from "@/components/ContentUnavailable";
 import { getWagtailPagesApiUrl } from "@/app/lib/config";
 
 const WAGTAIL_PAGES_API = getWagtailPagesApiUrl();

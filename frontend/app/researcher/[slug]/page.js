@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { BiographySections } from "@/app/components/BiographySections";
-import { ContentUnavailable } from "@/app/components/ContentUnavailable";
-import { ResearcherPageLayout } from "@/app/components/researcher/ResearcherPageLayout";
+import { BiographySections, ResearcherPageLayout } from "@/components/researchers";
+import { ContentUnavailable } from "@/components/ContentUnavailable";
 import { formatIndianDateRange } from "@/app/lib/formatDate";
 import {
   getBiographySections,

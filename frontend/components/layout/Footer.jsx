@@ -1,5 +1,3 @@
-"use client";
-
 export function Footer({ settings }) {
   return (
     <footer className="w-full mt-24 sm:mt-14 border-t border-red-800/30">

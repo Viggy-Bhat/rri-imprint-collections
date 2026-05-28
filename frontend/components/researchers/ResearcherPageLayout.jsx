@@ -1,6 +1,4 @@
-import { ProfileCard } from "@/app/components/ProfileCard";
-import { SidebarNavigation } from "@/app/components/SidebarNavigation";
-import MobileSectionsSidebar from "@/components/MobileSectionsSidebar";
+import { ProfileCard, SidebarNavigation, MobileSectionsSidebar } from "@/components/researchers";
 
 export function ResearcherPageLayout({
   slug,

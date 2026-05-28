@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { SidebarItemCard } from "@/app/components/SidebarItemCard";
+import { SidebarItemCard } from "@/components/researchers";
 import { getWagtailBackendBaseUrl } from "@/app/lib/config";
 import ArchiveFilterPanel from "@/components/ArchiveFilterPanel";
 

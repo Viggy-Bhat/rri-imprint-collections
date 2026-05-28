@@ -1,4 +1,4 @@
-import { ProtectedImage } from "@/app/components/media/ProtectedImage";
+import { ProtectedImage } from "@/components/media";
 
 export function ProfileCard({ researcher, profileImageUrl, items = [] }) {
   return (

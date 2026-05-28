@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { ContentUnavailable } from "@/app/components/ContentUnavailable";
-import { FilterableArchiveSection } from "@/app/components/FilterableArchiveSection";
-import { SidebarContentPage } from "@/app/components/SidebarContentPage";
-import { ResearcherPageLayout } from "@/app/components/researcher/ResearcherPageLayout";
+import { ContentUnavailable } from "@/components/ContentUnavailable";
+import { FilterableArchiveSection } from "@/components/archive";
+import { SidebarContentPage, ResearcherPageLayout } from "@/components/researchers";
 import SmartContentRenderer from "@/components/SmartContentRenderer";
 import { getWagtailBackendBaseUrl } from "@/app/lib/config";
 import {

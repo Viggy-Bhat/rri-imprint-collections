@@ -1,4 +1,4 @@
-import { SidebarItemCard } from "@/app/components/SidebarItemCard";
+import { SidebarItemCard } from "@/components/researchers";
 
 export function SidebarContentPage({ title, subtitle, items = [] }) {
   const normalizedItems = Array.isArray(items) ? items : [];

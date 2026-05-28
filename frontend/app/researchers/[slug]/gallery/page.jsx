@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import ResearcherGalleryViewer from "@/components/gallery/ResearcherGalleryViewer";
+import { ResearcherGalleryViewer } from "@/components/gallery";
 import {
   getResearcherGalleryImages,
   getResearcherPageBySlugResult,

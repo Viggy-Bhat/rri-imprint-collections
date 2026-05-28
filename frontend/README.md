@@ -60,27 +60,6 @@ app/
 │   ├── wagtailApi.js                # Image fetch utilities
 │   ├── siteSettingsApi.js           # Footer/site settings fetch
 │   └── formatDate.js                # Date formatting helpers
-├── components/
-│   ├── BiographySections.jsx        # Renders bio sections with rich text
-│   ├── ProfileCard.jsx              # Researcher profile sidebar card
-│   ├── SidebarNavigation.jsx        # Sidebar nav links (client component)
-│   ├── PageBreadcrumb.jsx           # Breadcrumb trail
-│   ├── ContentUnavailable.jsx       # Error/fallback state
-│   ├── ResearcherSearchList.jsx     # Searchable researcher list
-│   ├── FilterableArchiveSection.jsx # Filter panel for publications/guidance
-│   ├── SidebarContentPage.jsx       # Generic sidebar item renderer
-│   ├── SidebarItemCard.jsx          # Card for sidebar list items
-│   ├── Footer.jsx                   # Site footer
-│   ├── Breadcrumb.js                # Breadcrumb logic
-│   ├── blocks/
-│   │   ├── BioBlock.jsx             # Bio streamfield block
-│   │   ├── PublicationBlock.jsx     # Publication block renderer
-│   │   ├── GuidanceBlock.jsx        # Research guidance block renderer
-│   │   └── CustomFieldBlock.jsx     # Custom field block renderer
-│   ├── media/
-│   │   └── ProtectedImage.jsx       # Image with right-click/drag protection
-│   └── researcher/
-│       └── ResearcherPageLayout.jsx # 2/3-column layout for researcher pages
 ├── researcher/
 │   └── [slug]/
 │       ├── page.js                  # Researcher profile page
@@ -102,19 +81,55 @@ app/
         └── gallery/                  # Alternative gallery route
 ```
 
-### Shared Components (`components/`)
+### Frontend Architecture — Component Layer
 
 ```
 components/
-├── SiteHeader.tsx                   # Site header with hero section (client component)
-├── SiteHeader.module.css            # Header CSS module
-├── SmartContentRenderer.jsx         # Renders smart content blocks (publications, guidance, news, supervision, gallery)
-├── ArchiveFilterPanel.jsx           # Filter UI for archive sections
-├── FilterPanel.jsx                  # Generic filter panel
-├── MobileSectionsSidebar.jsx        # Mobile sidebar drawer
-├── gallery/                         # Gallery-specific components
-└── ui/                              # Reusable UI primitives (Card, etc.)
+├── layout/
+│   ├── SiteHeader.jsx               # Site header with hero section (client component)
+│   ├── SiteHeader.module.css         # Header CSS module
+│   ├── Footer.jsx                   # Site footer
+│   └── PageBreadcrumb.jsx           # Breadcrumb trail (client component)
+│   └── index.js                     # Barrel exports
+│
+├── researchers/
+│   ├── BiographySections.jsx        # Renders bio sections with rich text
+│   ├── MobileSectionsSidebar.jsx    # Mobile sidebar drawer (client component)
+│   ├── ProfileCard.jsx              # Researcher profile sidebar card
+│   ├── ResearcherPageLayout.jsx     # 2/3-column layout for researcher pages
+│   ├── SidebarContentPage.jsx       # Generic sidebar item renderer
+│   ├── SidebarItemCard.jsx          # Card for sidebar list items
+│   ├── SidebarNavigation.jsx        # Sidebar nav links (client component)
+│   └── index.js                     # Barrel exports
+│
+├── archive/
+│   ├── FilterableArchiveSection.jsx # Filter panel for publications/guidance (client component)
+│   └── index.js                     # Barrel exports
+│
+├── gallery/
+│   ├── GalleryCarousel.jsx          # Reusable image carousel
+│   ├── ResearcherGalleryViewer.jsx  # Full gallery view for a researcher
+│   └── index.js                     # Barrel exports
+│
+├── media/
+│   ├── ProtectedImage.jsx           # Image with right-click/drag protection (client component)
+│   └── index.js                     # Barrel exports
+│
+├── ui/
+│   └── card.jsx                     # Reusable Card primitive
+│
+├── ArchiveFilterPanel.jsx           # Filter UI for archive sections (client component)
+├── ContentUnavailable.jsx           # Error/fallback state
+├── ResearcherSearchList.jsx         # Searchable researcher list (client component)
+└── SmartContentRenderer.jsx         # Renders smart content blocks (publications, guidance, news, supervision, gallery)
 ```
+
+**Key principles:**
+- `app/` is the **route layer only** — pages, layouts, and loading states
+- `components/` is the **unified UI layer** — all reusable components live here
+- **Domain-based organization**: `layout/`, `researchers/`, `archive/`, `gallery/`, `media/`, `ui/`
+- **Barrel exports** (`index.js`) allow clean multi-imports from domain directories
+- **Import convention**: Always use `@/components/...` paths; never import from `@/app/components/...`
 
 ### Utilities
 
@@ -136,7 +151,8 @@ lib/
 ### Path Aliases
 Always use `@/` for imports:
 ```javascript
-import { Component } from "@/app/components/Component";
+import { SiteHeader } from "@/components/layout";
+import { ResearcherPageLayout } from "@/components/researchers";
 import { cn } from "@/lib/utils";
 ```
 
