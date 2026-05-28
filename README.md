@@ -6,7 +6,7 @@ This README replaces multiple top-level progress documents with one complete, up
 
 RRI Imprint Collections is a full-stack web platform for publishing researcher profile pages and structured scholarly content.
 
-- Backend: Django + Wagtail CMS + SQLite
+- Backend: Django 5.2 + Wagtail 7.4 CMS + MariaDB
 - Frontend: Next.js App Router + React
 - Data model: StreamField-driven researcher content (profile, bio sections, sidebar sections, smart content, gallery)
 
@@ -265,20 +265,13 @@ After SSL is active, set:
 - For global pattern visuals, keep `rri-pattern.png` at:
   - `frontend/public/assets/background/rri-pattern.png`
 
-## What This README Replaces
+## Documentation
 
-This consolidated README replaces these previous top-level files:
+Detailed documentation is organized in `docs/`:
 
-- `BACKGROUND_SETUP.md`
-- `IMPLEMENTATION_SUMMARY.md`
-- `INVESTIGATION_FINDINGS_DETAILED.md`
-- `QUICK_REFERENCE.md`
-- `SMART_CONTENT_DEBUG_ANALYSIS.md`
-- `SMART_CONTENT_FIX_SUMMARY.md`
-
-## Next Recommended Steps
-
-1. Finalize which generated/runtime artifacts should be tracked (for example `.pyc`, SQLite, and media variations).
-2. Add or refine `.gitignore` to avoid noisy commits.
-3. Run one final backend + frontend smoke test before deployment.
-4. Tag this commit as the baseline for the consolidated documentation state.
+- `docs/setup/` — Local development setup
+- `docs/architecture/` — System architecture and design decisions
+- `docs/api/` — API endpoint reference
+- `docs/migrations/` — Database migration history
+- `docs/deployment/` — Production deployment guides
+- `docs/archive/` — Historical debugging and investigation notes

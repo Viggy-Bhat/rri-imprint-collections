@@ -1,12 +1,12 @@
 # Backend — RRI Imprint Collections
 
-Django 6 + Wagtail 7.3rc1 CMS backend for the RRI Imprint Collections platform. Serves a JSON API consumed by the Next.js frontend.
+Django 5.2 + Wagtail 7.4 CMS backend for the RRI Imprint Collections platform. Serves a JSON API consumed by the Next.js frontend.
 
 ## Tech Stack
 
-- **Framework**: Django 6.0.x (LTS)
-- **CMS**: Wagtail 7.3rc1
-- **Database**: SQLite (dev), PostgreSQL (production)
+- **Framework**: Django 5.2.x
+- **CMS**: Wagtail 7.4
+- **Database**: SQLite (dev fallback), MariaDB (dev/production)
 - **Cache**: Redis (production), LocMem (dev fallback)
 - **Wsgi**: Gunicorn (production)
 
@@ -43,7 +43,7 @@ python manage.py makemigrations
 python manage.py migrate
 ```
 
-Always verify migrations are generated and applied. Migration `0015_add_smart_content_gallery_to_sidebar_items.py` was created specifically to fix this exact schema mismatch.
+Always verify migrations are generated and applied. Migrations were consolidated into `0001_initial.py` after the schema mismatch was resolved.
 
 ## Settings
 

@@ -4,7 +4,7 @@ Compact instructions for AI agents working in this repo. Every line answers: "Wo
 
 ## Architecture at a Glance
 
-- **Backend**: Django 6 + Wagtail 7.3rc1 CMS, SQLite in dev, PostgreSQL in production. Serves a JSON API and Wagtail admin at `:8000`.
+- **Backend**: Django 5.2 + Wagtail 7.4 CMS, SQLite in dev fallback, MariaDB in dev/production. Serves a JSON API and Wagtail admin at `:8000`.
 - **Frontend**: Next.js 16.2.3 + React 19, Tailwind CSS v4, JavaScript (not TypeScript). Consumes backend API at `:3000`.
 - **Pattern**: Headless CMS — editors create structured researcher pages in Wagtail; Next.js fetches and renders them.
 
@@ -29,6 +29,10 @@ python manage.py migrate
 - `GET /api/images/<id>/` — returns image file URL (used because Wagtail's v2 API image endpoint needs customization).
 - `GET /api/site-settings/` — returns institute name, department, address, phone, email from `SiteSettings`.
 - `GET /api/researchers/<slug>/sections/<section_slug>/filtered-items/?search=&sort=&year=` — search/filter/sort publications and guidance items server-side.
+- `GET /api/researchers/<slug>/publications/` — paginated publications
+- `GET /api/researchers/<slug>/guidance/` — paginated guidance
+- `GET /api/researchers/<slug>/news/` — paginated news
+- `GET /api/researchers/<slug>/sections/<slug>/count/` — section item count
 
 ### CORS
 Dev settings allow `localhost:3000` and `127.0.0.1:3000`. Production requires `DJANGO_CORS_ALLOWED_ORIGINS`.
@@ -74,7 +78,7 @@ Wagtail stores StreamField blocks as `{type, value}` objects. Fields are deeply 
 Content from Wagtail `RichTextBlock` arrives as HTML strings. Components render it with `dangerouslySetInnerHTML` inside `.rich-text-content` styled containers. This is safe because content is authored in the trusted CMS, not by end users.
 
 ### Migration History Lesson
-Migration `0015_add_smart_content_gallery_to_sidebar_items.py` was created specifically to fix the schema mismatch where `smart_content` and `gallery` fields were defined in `SidebarItemBlock` but missing from the database. Always verify migrations are generated and applied after block changes.
+Migrations were consolidated into `0001_initial.py` after the schema mismatch where `smart_content` and `gallery` fields were defined in `SidebarItemBlock` but missing from the database. Always verify migrations are generated and applied after block changes.
 
 ## Monorepo Boundaries
 
