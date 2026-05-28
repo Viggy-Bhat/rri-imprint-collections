@@ -38,6 +38,13 @@ def env_int(name, default):
     return int(raw_value)
 
 
+def _csv_env(name, default=None):
+    raw_value = os.getenv(name, "")
+    if not raw_value:
+        return default or []
+    return [entry.strip() for entry in raw_value.split(",") if entry.strip()]
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 

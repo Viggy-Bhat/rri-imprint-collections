@@ -1,15 +1,9 @@
-from .base import *
+from .base import *  # noqa: F401,F403
+from .base import _csv_env
 import os
 from django.core.exceptions import ImproperlyConfigured
 
 DEBUG = False
-
-
-def _csv_env(name, default=None):
-    raw_value = os.getenv(name, "")
-    if not raw_value:
-        return default or []
-    return [entry.strip() for entry in raw_value.split(",") if entry.strip()]
 
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", os.getenv("SECRET_KEY", ""))

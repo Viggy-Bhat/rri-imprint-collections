@@ -1,12 +1,7 @@
-from .base import *
+from .base import *  # noqa: F401,F403
+from .base import _csv_env
 import os
 
-
-def _csv_env(name, default=None):
-    raw_value = os.getenv(name, "")
-    if not raw_value:
-        return default or []
-    return [entry.strip() for entry in raw_value.split(",") if entry.strip()]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DJANGO_DEBUG", "1") == "1"
