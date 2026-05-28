@@ -5,11 +5,8 @@ __pycache__/
 
 # Django/runtime
 backend/static/
-backend/media/cache/
-backend/media/images/*.fill-*.jpg
-backend/media/images/*.fill-*.png
-backend/media/images/*.max-*.jpg
-backend/media/images/*.max-*.png
+backend/staticfiles/
+backend/media/
 
 # Node/Next
 frontend/node_modules/
@@ -38,6 +35,7 @@ env/
 backups/*.sql
 backups/**/*.sql
 backups/**/*.json
+backups/media_backup/
 
 # Logs
 *.log
@@ -45,9 +43,6 @@ backups/**/*.json
 # Python tooling
 .pytest_cache/
 .mypy_cache/
-
-# Production static files
-backend/staticfiles/
 
 # Temporary files
 *~
