@@ -1,277 +1,222 @@
-# RRI Imprint Collections - Consolidated Project README
+# RRI Imprint Collections
 
-This README replaces multiple top-level progress documents with one complete, up-to-date reference for what has been implemented so far.
+A full-stack web platform for publishing researcher profile pages and structured scholarly content. Built as a headless CMS — editors create and manage content in [Wagtail](https://wagtail.org), and a [Next.js](https://nextjs.org) frontend renders it via a REST API.
 
-## Project Overview
+---
 
-RRI Imprint Collections is a full-stack web platform for publishing researcher profile pages and structured scholarly content.
+## Features
 
-- Backend: Django 5.2 + Wagtail 7.4 CMS + MariaDB
-- Frontend: Next.js App Router + React
-- Data model: StreamField-driven researcher content (profile, bio sections, sidebar sections, smart content, gallery)
+- Researcher profiles with biography sections, publication lists, and archival records
+- Wagtail CMS for structured content authoring (StreamField-driven data model)
+- Smart content blocks: publications, research guidance, news clippings, student supervision, image galleries
+- Rich text formatting with typography styled for academic presentation
+- REST API for all content — consumed by the Next.js frontend
+- Responsive frontend with archive-appropriate visual design
 
-## Completed Work So Far
+---
 
-### 1. Global Visual Theme and Layout
+## Architecture
 
-Implemented a global academic-style visual system:
-
-- Repeating background pattern support at `frontend/public/assets/background/rri-pattern.png`
-- Site-wide overlay container for readability (`.site-container`)
-- Serif typography system with heading/body hierarchy
-- Archive-style color palette and spacing system
-
-Notes:
-
-- If the background image file is missing, the fallback background color still renders.
-- Previous pattern setup docs are now consolidated into this README.
-
-### 2. Rich Text Formatting End-to-End
-
-Enabled rich text formatting in Wagtail and frontend rendering:
-
-- Bold, italic, underline, links
-- Ordered and unordered lists
-- Heading levels (h2, h3, h4)
-- Styled blockquotes and consistent link appearance
-
-Backend implementation:
-
-- RichTextBlock feature sets declared in researcher block definitions
-
-Frontend implementation:
-
-- Rich text styling class and typography rules
-- HTML rendering in researcher content components
-
-### 3. Smart Content and Gallery Rendering (Critical Fix)
-
-Root cause that was fixed:
-
-- Sidebar block schema in migrations did not include `smart_content` and `gallery` even though blocks were defined in code.
-- API therefore returned missing/empty values, so frontend showed fallback empty states.
-
-Fix implemented:
-
-- New migration chain added and applied to align schema with current block definitions.
-- Frontend extraction and section rendering logic verified for nested `value.smart_content` and `value.gallery` structures.
-- Smart content rendering component verified for supported block types.
-
-Result:
-
-- Publications, guidance, news, supervision, and gallery data now flow correctly from Wagtail to Next.js pages when content is populated and published.
-
-### 4. Frontend Researcher Experience Improvements
-
-Frontend changes across researcher and layout components include:
-
-- Improved section page rendering/fallback behavior
-- Breadcrumb/navigation enhancements
-- Header/footer/layout updates
-- Additional researcher-related components and gallery support
-
-### 5. Migration and Data State
-
-Backend migrations include newer researcher migration files and schema updates for sidebar content structures.
-
-- Migration sequence includes post-0013 updates to correct schema mismatch
-- Database currently reflects local development progress
-
-## Architecture and Data Flow
-
-1. Editors create structured content in Wagtail.
-2. Content is stored in StreamField JSON structures in the backend database.
-3. Wagtail API exposes researcher pages and nested block values.
-4. Next.js fetches API data and normalizes sidebar/profile/content blocks.
-5. React components render smart content, rich text, and galleries.
-
-## Current Repository State
-
-There are many in-progress code changes in both backend and frontend, including:
-
-- Backend settings/models/blocks/migrations and media assets
-- Frontend app components, routing pages, styles, and package metadata
-
-This README reflects those cumulative implementation efforts as of April 22, 2026.
-
-## Local Development
-
-### Backend
-
-```bash
-cd backend
-source ../.venv/Scripts/activate
-python manage.py migrate
-python manage.py runserver
+```
+Next.js Frontend  (React 19, Tailwind CSS v4)
+        |
+    REST API  (JSON over HTTP)
+        |
+Django + Wagtail CMS  (backend)
+        |
+  Database  —  SQLite (dev)  /  MariaDB (recommended)
 ```
 
-### Frontend
+Content flow: editors author structured pages in Wagtail admin → content is stored as StreamField JSON → Wagtail API exposes it → Next.js fetches and renders it on the frontend.
 
-```bash
-cd frontend
-npm install
-npm run dev
-```
+---
 
-## Deployment Guide
+## Tech Stack
 
-### 1. Linux server setup (Ubuntu)
+| Component | Technology | Version |
+|-----------|-----------|---------|
+| **Backend framework** | Django | 5.2.14 |
+| **CMS** | Wagtail | 7.4 |
+| **Database (dev)** | SQLite | — |
+| **Database (production)** | MariaDB | 10.6+ |
+| **WSGI server** | Gunicorn | 22.0.0 |
+| **Frontend framework** | Next.js (App Router) | 16.2.3 |
+| **UI library** | React | 19.2.4 |
+| **CSS framework** | Tailwind CSS | v4 |
+| **Cache (optional)** | Redis | 5.3.1 |
 
-```bash
-sudo apt update && sudo apt upgrade -y
-sudo apt install -y git curl build-essential nginx certbot python3-certbot-nginx python3-dev default-libmysqlclient-dev
-```
+---
 
-### 2. Clone and dependency installation
+## Quick Start
+
+### Prerequisites
+
+- Python 3.10+
+- Node.js 18.18+
+- npm 9+
+
+### 1. Clone
 
 ```bash
 git clone https://github.com/Viggy-Bhat/rri-imprint-collections.git
 cd rri-imprint-collections
-cp .env.example .env
 ```
 
-Install backend/frontend dependencies:
+### 2. Backend
 
 ```bash
-# Backend
 python3 -m venv .venv
-source .venv/bin/activate
+source .venv/bin/activate           # Linux/Mac/WSL
+# .venv\Scripts\activate            # Windows
+
 pip install -r backend/requirements.txt
-
-# Frontend
-cd frontend
-npm ci
-cd ..
-```
-
-### 3. Environment variable configuration
-
-Edit .env and set production values:
-
-- DJANGO_SECRET_KEY
-- DJANGO_ALLOWED_HOSTS
-- DATABASE_URL (e.g., `mysql://db_user:db_password@127.0.0.1:3306/db_name`)
-- REDIS_URL
-- DJANGO_CORS_ALLOWED_ORIGINS
-- DJANGO_CSRF_TRUSTED_ORIGINS
-- NEXT_PUBLIC_WAGTAIL_BASE_URL (e.g., `http://your-backend-domain.com`)
-
-Set DJANGO_DEBUG=0 in production.
-
-### 4. Database migrations
-
-```bash
 cd backend
-source ../.venv/bin/activate
-DJANGO_SETTINGS_MODULE=backend.settings.production python manage.py migrate --noinput
+python manage.py migrate
+python manage.py seed_sitesettings
+python manage.py createsuperuser
+python manage.py runserver
 ```
 
-### 5. Server startup instructions
+**Backend runs at** `http://127.0.0.1:8000`  
+**Wagtail admin at** `http://127.0.0.1:8000/admin/`
 
-Backend startup command:
+### 3. Frontend
 
-```bash
-cd backend
-source ../.venv/bin/activate
-DJANGO_SETTINGS_MODULE=backend.settings.production gunicorn backend.wsgi:application --workers 4 --bind 0.0.0.0:8000 --timeout 120
-```
-
-Frontend startup command:
+Open a **new terminal** and run:
 
 ```bash
 cd frontend
-npm run build
-npm run start -- -p 3000
+cp .env.example .env.local
+npm install
+npm run dev
 ```
 
-### 6. Reverse proxy setup with nginx
+**Frontend runs at** `http://localhost:3000`
 
-Create /etc/nginx/sites-available/rri-imprint:
+### 4. Verify
 
-```nginx
-server {
-  listen 80;
-  server_name example.com www.example.com;
+- [ ] `http://127.0.0.1:8000/admin/` — Wagtail admin login page
+- [ ] `http://127.0.0.1:8000/api/v2/pages/` — JSON API response
+- [ ] `http://localhost:3000` — Home page with "From the Archives..." heading
 
-  location /api/ {
-    proxy_pass http://127.0.0.1:8000;
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto $scheme;
-  }
+### 5. Create Content
 
-  location /admin/ {
-    proxy_pass http://127.0.0.1:8000;
-    proxy_set_header Host $host;
-    proxy_set_header X-Forwarded-Proto $scheme;
-  }
+1. Log in to Wagtail admin at `http://127.0.0.1:8000/admin/`
+2. Go to Pages → Home → Add child page → **Researcher Page**
+3. Fill in fields and **Publish** the page
+4. Refresh the frontend — published pages appear on the home page
 
-  location /documents/ {
-    proxy_pass http://127.0.0.1:8000;
-    proxy_set_header Host $host;
-    proxy_set_header X-Forwarded-Proto $scheme;
-  }
+**For a detailed walkthrough, see [docs/setup/getting-started.md](docs/setup/getting-started.md).**
 
-  location /media/ {
-    proxy_pass http://127.0.0.1:8000;
-    proxy_set_header Host $host;
-    proxy_set_header X-Forwarded-Proto $scheme;
-  }
+---
 
-  location / {
-    proxy_pass http://127.0.0.1:3000;
-    proxy_set_header Host $host;
-    proxy_set_header X-Forwarded-Proto $scheme;
-  }
-}
-```
+## Environment Configuration
 
-Enable and reload:
+### Backend (`backend/.env`)
+
+Copy the example file:
 
 ```bash
-sudo ln -s /etc/nginx/sites-available/rri-imprint /etc/nginx/sites-enabled/rri-imprint
-sudo nginx -t
-sudo systemctl reload nginx
+cp backend/.env.example backend/.env
 ```
 
-### 7. SSL configuration with certbot
+Edit `backend/.env` to set at minimum:
+
+| Variable | Purpose |
+|----------|---------|
+| `DATABASE_URL` | MariaDB connection string (omit for SQLite) |
+| `DJANGO_SECRET_KEY` | Cryptographic signing key |
+
+### Frontend (`frontend/.env.local`)
 
 ```bash
-sudo certbot --nginx -d example.com -d www.example.com
-sudo certbot renew --dry-run
+cp frontend/.env.example frontend/.env.local
 ```
 
-After SSL is active, set:
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `NEXT_PUBLIC_WAGTAIL_BASE_URL` | `http://127.0.0.1:8000` | Backend API base URL |
 
-- DJANGO_SECURE_SSL_REDIRECT=1
-- DJANGO_SESSION_COOKIE_SECURE=1
-- DJANGO_CSRF_COOKIE_SECURE=1
-- DJANGO_SECURE_HSTS_SECONDS=31536000
+**Full reference**: [docs/setup/environment-variables.md](docs/setup/environment-variables.md)
 
-## Validation Checklist
+---
 
-- Backend starts without system check errors
-- Migrations apply successfully
-- Frontend builds successfully
-- Researcher section pages render smart content when provided
-- Gallery blocks display images and captions
-- Rich text formatting appears correctly in biography/content/sidebar text
+## Database Options
 
-## Known Operational Notes
+### SQLite (Default — Zero Configuration)
 
-- Ensure pages are published in Wagtail for API visibility.
-- Ensure section slugs in content match frontend route expectations.
-- For global pattern visuals, keep `rri-pattern.png` at:
-  - `frontend/public/assets/background/rri-pattern.png`
+When `DATABASE_URL` is unset, Django uses SQLite at `backend/db.sqlite3`. No setup required — ideal for quick-start and single-developer workflows.
+
+### MariaDB (Recommended for Teams)
+
+Install MariaDB, create a database and user, then set `DATABASE_URL` in `backend/.env`:
+
+```
+DATABASE_URL=mysql://rri_user:rri_password@127.0.0.1:3306/rri_imprint
+```
+
+Then run migrations:
+
+```bash
+cd backend && python manage.py migrate
+```
+
+**Detailed guide**: [docs/setup/database-setup.md](docs/setup/database-setup.md)
+
+---
 
 ## Documentation
 
-Detailed documentation is organized in `docs/`:
+All documentation is in the `docs/` directory:
 
-- `docs/setup/` — Local development setup
-- `docs/architecture/` — System architecture and design decisions
-- `docs/api/` — API endpoint reference
-- `docs/migrations/` — Database migration history
-- `docs/deployment/` — Production deployment guides
-- `docs/archive/` — Historical debugging and investigation notes
+| Directory | Contents |
+|-----------|----------|
+| [docs/setup/](docs/setup/) | Installation, environment variables, database setup, getting started |
+| [docs/architecture/](docs/architecture/) | System design, data flow, caching, pagination, architecture decisions |
+| [docs/api/](docs/api/) | Complete API endpoint reference |
+| [docs/migrations/](docs/migrations/) | SQLite-to-MariaDB guide, migration workflow, StreamField bug post-mortem |
+| [docs/runtime/](docs/runtime/) | Daily operations, cache management, logging, backup and restore |
+| [docs/backend/](docs/backend/) | Settings architecture, models, middleware, security, services |
+| [docs/frontend/](docs/frontend/) | Component architecture, API integration, rendering flow, styling |
+| [docs/archive/](docs/archive/) | Historical investigation notes (for reference only) |
+
+**Navigation**: Start with the [Documentation Hub](docs/README.md).
+
+---
+
+## Repository Structure
+
+```
+rri-imprint-web-demo/
+├── backend/                 # Django project
+│   ├── backend/             #   Settings, URLs, middleware
+│   │   └── settings/        #     base.py → dev.py / production.py
+│   └── researchers/         #   Main app: models, blocks, views, API, migrations
+├── frontend/                # Next.js project (App Router)
+│   ├── app/                 #   Pages, layouts, API utilities
+│   └── components/          #   React components (25 files across 7 domains)
+├── docs/                    # Documentation (see above)
+├── backups/                 # Database dumps and fixtures (gitignored)
+└── .env.example             # Environment variable template (root)
+```
+
+---
+
+## Important Notes
+
+- **SQLite is supported for development only.** For team environments and production, use MariaDB.
+- **Backup files in `backups/` are local artifacts and not committed to Git.** You must create your own backups. See [docs/runtime/backup-and-restore.md](docs/runtime/backup-and-restore.md).
+- **Pages must be published in Wagtail to appear in the API.** Unpublished drafts are invisible to the frontend.
+- **The background pattern image** at `frontend/public/assets/background/rri-pattern.png` must exist for the full visual theme. The site degrades gracefully if it's missing.
+- **See [AGENTS.md](AGENTS.md)** for critical development rules — especially the StreamField migration discipline.
+- **Deployment documentation** (nginx, systemd, SSL) is forthcoming. See the [Documentation Hub](docs/README.md) for current coverage.
+
+---
+
+## Contributing
+
+1. Read [AGENTS.md](AGENTS.md) for project conventions and critical rules.
+2. Read [docs/README.md](docs/README.md) for the documentation index.
+3. Follow the [setup guide](docs/setup/getting-started.md) to get running.
+4. Use `npm run lint` for frontend code quality — no test framework is currently configured.
+5. After any change to `blocks.py` or `models.py`, run `makemigrations` + `migrate` immediately.
