@@ -50,17 +50,28 @@ docs/
 ├── future-roadmap/                        (empty — forthcoming)
 │   └── .gitkeep
 │
-├── runtime/                               (empty — forthcoming)
-│   └── .gitkeep
+├── runtime/                               (3 files)
+│   ├── README.md                          Current — section index
+│   ├── operations.md                      Current — daily ops, cache, logging (~350 lines)
+│   └── backup-and-restore.md              Current — backup/restore procedures (~230 lines)
 │
-├── setup/                                 (1 file)
-│   └── setup-local.md                     Current — local development setup (112 lines)
+├── setup/                                 (7 files)
+│   ├── README.md                          Current — section index
+│   ├── getting-started.md                 Current — 15-minute quick start (~200 lines)
+│   ├── backend-setup.md                   Current — detailed backend setup (~300 lines)
+│   ├── frontend-setup.md                  Current — frontend installation (~200 lines)
+│   ├── database-setup.md                  Current — MariaDB & SQLite setup (~260 lines)
+│   ├── environment-variables.md           Current — 28-variable reference (~350 lines)
+│   └── setup-local.md                     Deprecated — redirects to new docs
 │
 ├── troubleshooting/                       (empty — forthcoming)
 │   └── .gitkeep
 │
-└── migrations/                            (1 file)
-    └── sqlite-to-mariadb.md               Current — SQLite to MariaDB migration history (48 lines)
+└── migrations/                            (4 files)
+    ├── README.md                          Current — section index
+    ├── sqlite-to-mariadb.md               Current — full migration guide (~390 lines)
+    ├── best-practices.md                  Current — migration workflow & verification
+    └── wagtail-migration-issues.md        Current — StreamField schema mismatch post-mortem
 ```
 
 ---
@@ -70,12 +81,13 @@ docs/
 | Scenario | Start Here |
 |---|---|
 | If you're new to the project | [Root README.md](../README.md) then [System Overview](architecture/system-overview.md) |
-| If you're setting up locally | [Local Setup Guide](setup/setup-local.md) |
-| If you're deploying to production | [Root README.md deployment section](../README.md#deployment-guide) then [Security guide](backend/security.md) *(forthcoming)* |
+| If you're setting up locally | [Getting Started](setup/getting-started.md) then [Backend Setup](setup/backend-setup.md) |
+| If you're configuring environment variables | [Environment Variables Reference](setup/environment-variables.md) |
 | If you're debugging API issues | [API Endpoints Reference](api/endpoints.md) |
 | If you're changing StreamField blocks | [AGENTS.md](../AGENTS.md) — "After ANY StreamField block change, migrate immediately" |
-| If you're building frontend components | [System Overview](architecture/system-overview.md) then [Data Flow](architecture/data-flow.md) *(forthcoming)* |
-| If you're managing database migrations | [Migration History](migrations/sqlite-to-mariadb.md) |
+| If you're building frontend components | [System Overview](architecture/system-overview.md) then [Data Flow](architecture/data-flow.md) |
+| If you're managing database migrations | [Migration Guide](migrations/sqlite-to-mariadb.md) |
+| If you're handling day-to-day operations | [Runtime Operations](runtime/operations.md) |
 | If you're looking at historical context | [Archive](archive/) — historical investigation documents |
 
 ---
@@ -86,33 +98,32 @@ docs/
 
 1. **[Root README.md](../README.md)** — Project overview, tech stack, completed work summary, local dev commands.
 2. **[System Architecture Overview](architecture/system-overview.md)** — Headless CMS pattern, Django/Next.js interaction, StreamField data model at a glance.
-3. **[Local Development Setup](setup/setup-local.md)** — Prerequisites, virtual environment, `npm install`, database setup, running both servers.
-4. **[Backend Project Structure](backend/project-structure.md)** *(forthcoming — Phase C)* — Django project layout, app organization, settings hierarchy.
-5. **[Data Models](backend/models.md)** *(forthcoming — Phase C)* — `ResearcherPage`, `ResearcherSectionPage`, `SiteSettings`, StreamField block definitions.
+3. **[Getting Started](setup/getting-started.md)** — 15-minute quick-start: clone, venv, install, migrate, run both servers.
+4. **[Backend Setup](setup/backend-setup.md)** — Detailed Django setup, virtual environment, dependencies, migrations.
+5. **[Frontend Setup](setup/frontend-setup.md)** — Next.js dev server, environment config, project structure.
+6. **[Environment Variables](setup/environment-variables.md)** — Complete reference of all 28 configuration variables.
 
 ### Deployment Engineer
 
 1. **[Root README.md](../README.md)** — Deployment section: Linux setup, environment variables, gunicorn, nginx, SSL.
-2. **[Settings Architecture](backend/settings-architecture.md)** *(forthcoming — Phase C)* — `base.py`, `dev.py`, `production.py` hierarchy, every environment variable and its effect.
-3. **[Security Hardening](backend/security.md)** *(forthcoming — Phase C)* — `ApiSecurityHeadersMiddleware`, CORS, CSRF, HSTS, session security.
-4. **[Deployment Guides](deployment/)** *(forthcoming — directory empty, not yet written)* — Platform-specific deployment instructions.
-5. **[Caching Architecture](architecture/caching-architecture.md)** *(forthcoming — Phase B)* — Redis vs LocMem fallback, cache invalidation strategy.
+2. **[Settings Architecture](backend/settings-architecture.md)** — `base.py`, `dev.py`, `production.py` hierarchy, every environment variable and its effect.
+3. **[Security Hardening](backend/security.md)** — `ApiSecurityHeadersMiddleware`, CORS, CSRF, HSTS, session security.
+4. **[Caching Architecture](architecture/caching-architecture.md)** — Redis vs LocMem fallback, cache invalidation strategy.
 
 ### Maintainer
 
 1. **[AGENTS.md](../AGENTS.md)** — Critical rules: StreamField migration discipline, settings switching, custom API endpoints, frontend conventions.
-2. **[Architecture Decisions](architecture/decisions.md)** *(forthcoming — Phase B)* — Why headless CMS was chosen, why SQLite was abandoned, consolidation of migrations, pagination design rationale.
+2. **[Architecture Decisions](architecture/decisions.md)** — Why headless CMS was chosen, why SQLite was abandoned, consolidation of migrations, pagination design rationale.
 3. **[API Endpoints Reference](api/endpoints.md)** — All endpoints: Wagtail built-in, custom views, archive pagination, filtered item search.
-4. **[Services & Utilities](backend/services-and-utilities.md)** *(forthcoming — Phase C)* — Business logic layer (`archive_service.py`), utility modules (text, mapping, extraction, sorting, pagination).
-5. **[Migration History](migrations/sqlite-to-mariadb.md)** — Why SQLite failed, StreamField schema mismatch recovery, consolidated `0001_initial.py`.
+4. **[Services & Utilities](backend/services-and-utilities.md)** — Business logic layer (`archive_service.py`), utility modules.
+5. **[Migration Guide](migrations/sqlite-to-mariadb.md)** — Database migration, backup/restore, recovery procedures.
 
 ### System Administrator
 
-1. **[Settings Architecture](backend/settings-architecture.md)** *(forthcoming — Phase C)* — Complete environment variable reference, production enforcement.
-2. **[Security Hardening](backend/security.md)** *(forthcoming — Phase C)* — Security headers, SSL configuration, allowed hosts, CORS origins.
-3. **[Deployment Guides](deployment/)** *(forthcoming — directory empty, not yet written)* — Server provisioning, nginx reverse proxy, SSL certificates.
-4. **[Runtime Operations](runtime/)** *(forthcoming — directory empty, not yet written)* — Monitoring, logging, backup/restore procedures.
-5. **[Database Operations](migrations/)** — Migration history, SQLite to MariaDB transition, operational notes.
+1. **[Settings Architecture](backend/settings-architecture.md)** — Complete environment variable reference, production enforcement.
+2. **[Security Hardening](backend/security.md)** — Security headers, SSL configuration, allowed hosts, CORS origins.
+3. **[Runtime Operations](runtime/operations.md)** — Monitoring, logging, cache management, backup/restore procedures, day-to-day tasks.
+4. **[Database Operations](migrations/sqlite-to-mariadb.md)** — Migration history, SQLite to MariaDB transition, recovery procedures.
 
 ---
 
@@ -187,19 +198,30 @@ docs/
 
 | File | Status | Last Updated | Lines | Notes |
 |---|---|---|---|---|
-| sqlite-to-mariadb.md | Current | 2026-04-22 | 48 | SQLite abandonment rationale. Needs expansion with wagtail-migration-issues.md and best-practices.md |
+| README.md | Current | 2026-05-29 | 28 | Section index with critical rule reminder |
+| sqlite-to-mariadb.md | Current | 2026-05-29 | ~390 | Complete migration guide: safety checklists, backup procedures, walkthrough, fixture export/import, recovery, rollback |
+| best-practices.md | Current | 2026-05-29 | 280 | Standard migration workflow, verification checklist, StreamField-specific guidance, prevention rules |
+| wagtail-migration-issues.md | Current | 2026-05-29 | 277 | Complete post-mortem of the StreamField schema mismatch bug — symptoms, diagnosis, root cause, fix procedure, prevention |
 
 ### runtime/
 
 | File | Status | Last Updated | Lines | Notes |
 |---|---|---|---|---|
-| (directory) | Forthcoming | — | — | Empty. Needs: monitoring setup, logging configuration, backup/restore procedures, health check endpoints |
+| README.md | Current | 2026-05-29 | ~35 | Section index with quick command reference |
+| operations.md | Current | 2026-05-29 | ~350 | Daily operations, service health checks, cache management, dependency upgrades, logging/monitoring, content publishing workflow |
+| backup-and-restore.md | Current | 2026-05-29 | ~230 | MariaDB/SQLite backup, Django fixture export/import, media file backup, automated backup scripts, restore procedures |
 
 ### setup/
 
 | File | Status | Last Updated | Lines | Notes |
 |---|---|---|---|---|
-| setup-local.md | Current | 2026-04-22 | 112 | Local development prerequisites and commands. Accurate for current dev workflow |
+| README.md | Current | 2026-05-29 | ~40 | Section index with technology version table |
+| getting-started.md | Current | 2026-05-29 | ~200 | 15-minute quick-start: clone, venv, install, migrate, run both servers |
+| backend-setup.md | Current | 2026-05-29 | ~300 | Detailed Django setup: dependencies, settings hierarchy, seed data, verification |
+| frontend-setup.md | Current | 2026-05-29 | ~200 | Next.js setup: dependencies, environment config, dev server, build, lint |
+| database-setup.md | Current | 2026-05-29 | ~260 | MariaDB installation, user/database creation, SQLite fallback, charset config, WSL notes |
+| environment-variables.md | Current | 2026-05-29 | ~350 | Complete 28-variable reference: required/optional, defaults, source files, purpose |
+| setup-local.md | Deprecated | 2026-05-29 | 5 | Redirects to new documentation structure |
 
 ### troubleshooting/
 
@@ -215,26 +237,20 @@ docs/
 
 | Directory | Priority | What's Needed |
 |---|---|---|
-| `docs/deployment/` | High | Platform-specific deployment guides, nginx configuration details, gunicorn tuning, process supervision (systemd), container deployment options |
-| `docs/frontend/` | High | Component architecture map, App Router routing guide, data fetching patterns (`wagtailApi.js`, `researcherApi.js`), image handling (`ProtectedImage`, URL prefixing), styling conventions (Tailwind v4, `cn()`), `formatDate.js` reference |
-| `docs/runtime/` | Medium | Monitoring and observability setup, logging configuration, backup/restore procedures, health check endpoint documentation |
-| `docs/troubleshooting/` | Medium | Common error scenarios: CORS misconfiguration, missing `rri-pattern.png`, StreamField migration mismatches, Wagtail publish state issues, environment variable troubleshooting |
-| `docs/future-roadmap/` | Low | Planned features, known technical debt items, architecture evolution plans, upgrade guides (Next.js, Django, Wagtail) |
+| `docs/deployment/` | High | Platform-specific deployment guides, nginx configuration details, gunicorn tuning, process supervision (systemd) |
+| `docs/frontend/` | High | Component architecture map, App Router routing guide, data fetching patterns, image handling, styling conventions |
+| `docs/troubleshooting/` | Medium | Common error scenarios, diagnostic procedures, resolution steps |
+| `docs/future-roadmap/` | Low | Planned features, known technical debt items, architecture evolution plans, upgrade guides |
 
 ### Missing Files in Populated Directories
 
 | Missing File | Directory | Priority | Rationale |
 |---|---|---|---|
-| `wagtail-migration-issues.md` | `docs/migrations/` | High | Documents the worst bug in this repo: StreamField block changes without migration regeneration. Covers symptoms, diagnosis, fix procedure, prevention |
-| `best-practices.md` | `docs/migrations/` | Medium | Migration workflow: when to `makemigrations`, how to verify schema alignment, testing migrations before deployment, handling merged migration trees |
-| `README.md` | `docs/archive/` | Low | Index explaining what each historical document contains, when it was relevant, and why it's archived |
+| `README.md` | `docs/archive/` | Low | Index explaining what each historical document contains, and why it's archived |
 
 ### Missing Cross-References
 
-- `docs/api/endpoints.md` does not link to `docs/architecture/pagination-architecture.md` for archive endpoint design rationale
-- `docs/setup/setup-local.md` does not link to `docs/backend/settings-architecture.md` for environment variable details
-- `docs/architecture/system-overview.md` does not link to `docs/architecture/data-flow.md` (forthcoming) for detailed request lifecycle
-- Root `README.md` links to `docs/` but does not point to this index as the primary documentation entry point
+- Root `README.md` links to `docs/` but does not cross-reference specific documents in setup/ or runtime/
 - `AGENTS.md` describes migration history but does not reference `docs/migrations/sqlite-to-mariadb.md`
 - No document cross-references `backend/README.md` and `frontend/README.md` as complementary sub-project references
 
@@ -242,7 +258,7 @@ docs/
 
 ## Duplicate Information
 
-Information appears in multiple places, creating maintenance burden. The canonical source should eventually be `docs/`; other files should link here.
+Information appears in multiple places, creating maintenance burden. The canonical source should be `docs/`; other files should link here. The old `setup-local.md` has been deprecated in favor of the new setup/ documents.
 
 ### Deployment Information
 - **Root README.md** — lines 116-252: Full deployment guide (server setup, env config, gunicorn, nginx, SSL)
