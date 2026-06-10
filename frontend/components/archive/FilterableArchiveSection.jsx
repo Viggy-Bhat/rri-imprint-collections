@@ -18,7 +18,7 @@ export function FilterableArchiveSection({ researcherSlug, sectionType }) {
   const [error, setError] = useState(null);
 
   const [draftSearchTerm, setDraftSearchTerm] = useState("");
-  const [draftSortOption, setDraftSortOption] = useState("title_asc");
+  const [draftSortOption, setDraftSortOption] = useState("");
   const [draftYear, setDraftYear] = useState("");
 
   const fetchPage = useCallback(async (newOffset, searchTerm, sortOption, year) => {
@@ -33,7 +33,7 @@ export function FilterableArchiveSection({ researcherSlug, sectionType }) {
       const query = new URLSearchParams();
       query.set("limit", String(PAGE_SIZE));
       query.set("offset", String(Math.max(newOffset, 0)));
-      query.set("sort", sortOption || "title_asc");
+      if (sortOption) query.set("sort", sortOption);
 
       if (searchTerm) {
         query.set("search", searchTerm);
@@ -68,14 +68,14 @@ export function FilterableArchiveSection({ researcherSlug, sectionType }) {
 
   useEffect(() => {
     setDraftSearchTerm("");
-    setDraftSortOption("title_asc");
+    setDraftSortOption("");
     setDraftYear("");
-    fetchPage(0, "", "title_asc", "");
+    fetchPage(0, "", "", "");
   }, [fetchPage]);
 
   function handleApplyFilters() {
     const searchTerm = draftSearchTerm.trim();
-    const sortOption = draftSortOption || "title_asc";
+    const sortOption = draftSortOption;
     const year = draftYear.trim();
     setOffset(0);
     fetchPage(0, searchTerm, sortOption, year);
@@ -83,10 +83,10 @@ export function FilterableArchiveSection({ researcherSlug, sectionType }) {
 
   function handleResetFilters() {
     setDraftSearchTerm("");
-    setDraftSortOption("title_asc");
+    setDraftSortOption("");
     setDraftYear("");
     setOffset(0);
-    fetchPage(0, "", "title_asc", "");
+    fetchPage(0, "", "", "");
   }
 
   function handleRetry() {
@@ -108,7 +108,7 @@ export function FilterableArchiveSection({ researcherSlug, sectionType }) {
   const startItem = total > 0 ? offset + 1 : 0;
   const endItem = Math.min(offset + PAGE_SIZE, total);
 
-  const hasActiveFilters = draftSearchTerm.trim() || draftYear.trim() || draftSortOption !== "title_asc";
+  const hasActiveFilters = draftSearchTerm.trim() || draftYear.trim() || draftSortOption !== "";
   const isEmptyState = !isLoading && !error && items.length === 0;
   const isNoItemsAtAll = isEmptyState && total === 0 && !hasActiveFilters;
   const isNoMatchAfterFilter = isEmptyState && total > 0;

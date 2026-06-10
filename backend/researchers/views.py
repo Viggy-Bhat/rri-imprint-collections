@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 def researcher_section_filtered_items(request, slug, section_slug):
     """GET /api/researchers/<slug>/sections/<section_slug>/filtered-items/?search=&sort=&year="""
     search_term = request.GET.get("search", "")
-    sort_option = request.GET.get("sort", "title_asc")
+    sort_option = request.GET.get("sort", "")
     year = request.GET.get("year", "")
 
     try:

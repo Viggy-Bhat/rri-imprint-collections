@@ -53,7 +53,7 @@ def _get_researcher_page(slug):
 def researcher_publications(request, slug):
     """GET /api/researchers/<slug>/publications/?search=&sort=&year=&limit=&offset="""
     search = request.GET.get("search", "")
-    sort_option = request.GET.get("sort", "title_asc")
+    sort_option = request.GET.get("sort", "")
     year = request.GET.get("year", "")
 
     pagination, error = _parse_pagination_params(request)
@@ -80,7 +80,7 @@ def researcher_publications(request, slug):
 def researcher_guidance(request, slug):
     """GET /api/researchers/<slug>/guidance/?search=&sort=&year=&limit=&offset="""
     search = request.GET.get("search", "")
-    sort_option = request.GET.get("sort", "title_asc")
+    sort_option = request.GET.get("sort", "")
     year = request.GET.get("year", "")
 
     pagination, error = _parse_pagination_params(request)
@@ -107,7 +107,7 @@ def researcher_guidance(request, slug):
 def researcher_news(request, slug):
     """GET /api/researchers/<slug>/news/?search=&sort=&year=&limit=&offset="""
     search = request.GET.get("search", "")
-    sort_option = request.GET.get("sort", "title_asc")
+    sort_option = request.GET.get("sort", "")
     year = request.GET.get("year", "")
 
     pagination, error = _parse_pagination_params(request)

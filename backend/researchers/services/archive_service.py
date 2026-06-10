@@ -84,7 +84,7 @@ def build_items_from_blocks(blocks):
     return items
 
 
-def extract_and_filter_by_type(researcher_page, block_type, search="", sort_option="title_asc", year=""):
+def extract_and_filter_by_type(researcher_page, block_type, search="", sort_option="", year=""):
     """Scan sidebar_items + section pages for block type, build items, filter+sort."""
     sidebar_sections = list(getattr(researcher_page, "sidebar_items", []) or [])
 
@@ -186,7 +186,7 @@ def build_section_items(researcher_page, section_slug):
     return build_items_from_blocks(section_blocks)
 
 
-def filter_items(items, search_term="", sort_option="title_asc", year=""):
+def filter_items(items, search_term="", sort_option="", year=""):
     """Search by title/author/journal, filter by year, apply sort."""
     from ..utils.item_extractors import get_author, get_journal, get_year
     from ..utils.mapping_utils import get_mapping_value
@@ -214,10 +214,10 @@ def filter_items(items, search_term="", sort_option="title_asc", year=""):
     if has_year:
         results = [item for item in results if get_year(item) == year_number]
 
-    return sort_results(results, sort_option or "title_asc")
+    return sort_results(results, sort_option)
 
 
-def get_researcher_filtered_items(slug, section_slug, search_term="", sort_option="title_asc", year=""):
+def get_researcher_filtered_items(slug, section_slug, search_term="", sort_option="", year=""):
     """Resolve researcher page, build section items, filter+sort. Returns None if not found."""
     researcher_page = (
         ResearcherPage.objects.live().public().filter(slug=slug).specific().first()

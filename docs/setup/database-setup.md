@@ -85,16 +85,30 @@ sudo systemctl status mariadb
 
 ```bash
 sudo mysql -u root <<EOF
-CREATE DATABASE rri_imprint CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-CREATE USER 'rri_user'@'localhost' IDENTIFIED BY 'rri_password';
-GRANT ALL PRIVILEGES ON rri_imprint.* TO 'rri_user'@'localhost';
+CREATE DATABASE rri_imprint
+ CHARACTER SET utf8mb4 
+ COLLATE utf8mb4_general_ci;
+
+  **Verification**
+  SELECT DEFAULT_COLLATION_NAME
+FROM information_schema.SCHEMATA
+WHERE SCHEMA_NAME='rri_imprint';
+
+**Expected**
+utf8mb4_general_ci
+
+CREATE USER 'rri_user'@'localhost'
+IDENTIFIED BY 'rri_password';
+GRANT ALL PRIVILEGES
+ON rri_imprint.*
+TO 'rri_user'@'localhost';
 FLUSH PRIVILEGES;
 EOF
 ```
 
 Verify the user can connect:
 ```bash
-mysql -u rri_user -prri_password -e "SELECT 1 AS connected;"
+mysql -u rri_user -p rri_password -e "SELECT 1 AS connected;"
 # Expected:
 # +-----------+
 # | connected |

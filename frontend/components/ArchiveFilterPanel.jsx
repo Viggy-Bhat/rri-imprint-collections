@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 const SORT_OPTIONS = [
+  { value: "", label: "Default Order" },
   { value: "title_asc", label: "Title A-Z" },
   { value: "title_desc", label: "Title Z-A" },
   { value: "author_asc", label: "Author A-Z" },
