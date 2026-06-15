@@ -16,6 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata = {
   title: "Imprints Collection",
   description: "An archive of researchers and their contributions",
+  icons: {
+    icon: "/assets/background/RRI-Logo-Colour.png",
+  },
 };
 
 export default async function RootLayout({ children }) {
